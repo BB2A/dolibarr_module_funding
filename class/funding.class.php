@@ -3161,9 +3161,10 @@ class Funding extends CommonObject
 	* @param   int          $subject    subject
 	* @param   int          $message    message
 	* @param   int          $filename   filename
+	* @param   bool         $disableautocopy  1 to bypass MAIN_MAIL_AUTOCOPY_TO BCC (used for user notifications)
 	* @return  int	0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	*/
-	public function sendMail($from = '', $sendto = '', $subject = '', $message = '', $filename = '')
+	public function sendMail($from = '', $sendto = '', $subject = '', $message = '', $filename = '', $disableautocopy = false)
 	{
 		global $conf, $langs;
 
@@ -3197,7 +3198,15 @@ class Funding extends CommonObject
 		}
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+		$savedautocopy = '';
+		if (!empty($disableautocopy) && isset($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
+			$savedautocopy = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+			unset($conf->global->MAIN_MAIL_AUTOCOPY_TO);
+		}
 		$mailfile = new CMailFile(utf8_encode($subject), $sendto, $from, $message, '', '', '', '', '', 0, 1);
+		if ($savedautocopy !== '') {
+			$conf->global->MAIN_MAIL_AUTOCOPY_TO = $savedautocopy;
+		}
 		$result = $mailfile->sendfile();
 
 		return $result;
@@ -3295,7 +3304,7 @@ class Funding extends CommonObject
 						$from = $user_modification->email;
 					}
 
-					$this->sendMail($from, $user->email, $subject, $message);
+					$this->sendMail($from, $user->email, $subject, $message, '', true);
 					$sent_count++;
 				}
 			}
