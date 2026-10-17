@@ -394,9 +394,8 @@ if (empty($reshook)) {
 	// $_POST['addfile'] = '';
 
 	$documenturl = DOL_URL_ROOT.'/document.php';
-	$tmp = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
-	if (!empty($tmp)) {
-		$documenturl = $tmp;
+	if (!empty(getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'))) {
+		$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
 	}
 	$modulepart = 'funding';
 
