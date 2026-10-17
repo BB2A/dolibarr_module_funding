@@ -3315,6 +3315,7 @@ class Funding extends CommonObject
 
 			// Get list of recipients (same rules as before)
 			$recipients = array();
+			$sendfailed = 0;
 
 			if ($funding->origin == 'order' && $funding->origin_id > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -3377,16 +3378,27 @@ class Funding extends CommonObject
 					}
 
 					$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-					$funding->sendMail($from, $user->email, $subject, $message);
+					if ($funding->sendMail($from, $user->email, $subject, $message) <= 0) {
+						$sendfailed++;
+					}
 				}
 			}
 
-			// Mark actions as processed
-			$sql = "UPDATE ".MAIN_DB_PREFIX."funding_notification SET processed = 1, date_processed = '".$db->idate(dol_now())."'";
-			$sql .= " WHERE rowid IN (".implode(',', $rowids).")";
-			if (!$db->query($sql)) {
+			// Cleanup: delete queued actions once the grouped email has been sent,
+			// otherwise mark them processed to avoid resend and unbounded table growth
+			if (empty($sendfailed)) {
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."funding_notification WHERE rowid IN (".implode(',', $rowids).")";
+				if (!$db->query($sql)) {
+					$error++;
+					dol_syslog(__METHOD__." failed to delete processed notifications for funding ".$funding_id.": ".$db->lasterror(), LOG_ERR);
+				}
+			} else {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."funding_notification SET processed = 1, date_processed = '".$db->idate(dol_now())."'";
+				$sql .= " WHERE rowid IN (".implode(',', $rowids).")";
+				if (!$db->query($sql)) {
 					$error++;
 					dol_syslog(__METHOD__." failed to mark notifications as processed for funding ".$funding_id.": ".$db->lasterror(), LOG_ERR);
+				}
 			}
 		}
 
