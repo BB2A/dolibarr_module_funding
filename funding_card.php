@@ -806,7 +806,7 @@ if ($object->id > 0 && $permissiontoread && (empty($action) || ($action != 'edit
 			print '</form>';
 		} else {
 			$relativepath = $object->ref.'/'.$object->{'fundoc'.$i};
-			($object->{'fundoc'.$i})? print '<td><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).(!empty($param) ? '&'.$param : '').'">'.$object->{'fundoc'.$i}.'</a>'.$formfile->showPreview($file, $modulepart, $relativepath, 0, $param):print'<td></td>';
+			($object->{'fundoc'.$i})? print '<td><a href="'.(isset($documenturl) ? $documenturl : DOL_URL_ROOT.'/document.php').'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).(!empty($param) ? '&'.$param : '').'">'.$object->{'fundoc'.$i}.'</a>'.$formfile->showPreview($file, $modulepart, $relativepath, 0, $param):print'<td></td>';
 			print '<td></td>';
 			($object->{'fundoc'.$i} && $permissiontoadd)? print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&typedoc='.$typedoc.'&iddoc='.$iddoc.'&action=deletefile&doc=fundoc'.$i.'&file='.$object->{'fundoc'.$i}.'">'.img_picto($langs->trans("Delete"), 'delete', 'class=""').'</a></td>' : print '<td></td>';
 		}
@@ -840,7 +840,7 @@ if ($object->id > 0 && $permissiontoread && (empty($action) || ($action != 'edit
 			print '</form>';
 		} else {
 			$relativepath = $object->ref.'/'.$object->{'funfoldoc'.$i};
-			($object->{'funfoldoc'.$i})? print '<td><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).(!empty($param) ? '&'.$param : '').'">'.$object->{'funfoldoc'.$i}.'</a>'.$formfile->showPreview($file, $modulepart, $relativepath, 0, $param):print'<td></td>';
+			($object->{'funfoldoc'.$i})? print '<td><a href="'.(isset($documenturl) ? $documenturl : DOL_URL_ROOT.'/document.php').'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).(!empty($param) ? '&'.$param : '').'">'.$object->{'funfoldoc'.$i}.'</a>'.$formfile->showPreview($file, $modulepart, $relativepath, 0, $param):print'<td></td>';
 			print '<td></td>';
 			($object->{'funfoldoc'.$i} && $permissiontoadd)? print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&typedoc='.$typedoc.'&iddoc='.$iddoc.'&action=deletefile&doc=funfoldoc'.$i.'&file='.$object->{'funfoldoc'.$i}.'">'.img_picto($langs->trans("Delete"), 'trash', 'class=""').'</a></td>':print'<td></td>';
 		}
