@@ -23,8 +23,8 @@
 
 	<!-- Custom rules -->
 	<config name="installed_paths" value="C:/www/dolibarr/dev/setup/codesniffer" />
-	<rule ref="codesniffer.Dolibarr.LanguageOfComments"/>
-	<rule ref="codesniffer.Dolibarr.CheckIsModEnabledArgument"/>
+	<rule ref="Dolibarr.Commenting.LanguageOfComments"/>
+	<rule ref="Dolibarr.Functions.CheckIsModEnabledArgument"/>
 
 	<!-- List of all tests -->
 

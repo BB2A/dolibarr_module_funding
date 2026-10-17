@@ -57,7 +57,6 @@ class Funding extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 
-
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
@@ -3354,7 +3353,7 @@ class Funding extends CommonObject
 			// Send one email per recipient with all actions grouped
 			foreach ($recipients as $user_id => $role) {
 				$user = new User($db);
-				if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && !in_array($user->id, $actionuserids)) {
+				if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && empty($user->fk_soc) && !in_array($user->id, $actionuserids)) {
 					global $mysoc;
 
 					$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $funding->ref;
@@ -3403,6 +3402,5 @@ class Funding extends CommonObject
 		}
 
 		return $error ? -1 : 0;
-	}
 	}
 }
