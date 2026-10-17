@@ -63,6 +63,11 @@ class Funding extends CommonObject
 	public static $pendingNotifications = array();
 
 	/**
+	 * @var bool True when the shutdown flush callback has already been registered
+	 */
+	public static $flushRegistered = false;
+
+	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
@@ -3226,6 +3231,15 @@ class Funding extends CommonObject
 
 		// Queue action; all actions of the same request are grouped into a single email per recipient
 		self::$pendingNotifications[] = array('action' => $action, 'user_id' => $user_modification->id);
+
+		// Flush on shutdown so the grouped email is still sent if the action handler redirects or refreshes the page
+		if (!self::$flushRegistered) {
+			self::$flushRegistered = true;
+			$self = $this;
+			register_shutdown_function(function () use ($self) {
+				$self->flushNotifications();
+			});
+		}
 		return 0;
 	}
 
