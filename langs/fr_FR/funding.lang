@@ -473,3 +473,5 @@ ActionPerformed=Action effectuée
 ViewFunding=Voir le financement
 ViewOrder=Voir la commande
 EmailSentBy=Email envoyé par
+CronFundingNotifications = Notifications financement regroupées
+CommentCronFundingNotifications = Envoie un email regroupé par financement et par destinataire pour toutes les actions mises en file (fenêtre de regroupement paramétrable via FUNDING_NOTIFICATION_GROUPING_WINDOW en secondes, 300 par défaut).

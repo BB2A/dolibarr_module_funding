@@ -266,6 +266,21 @@ class modFunding extends DolibarrModules
 				'test' => isModEnabled('funding'),
 				'priority' => 50,
 			 ),
+			2 => array(
+				'entity'=>1,
+				'label' => 'CronFundingNotifications',
+				'jobtype' => 'method',
+				'class' => '/funding/class/funding.class.php',
+				'objectname' => 'Funding',
+				'method' => 'cronFundingNotifications',
+				'parameters' => '',
+				'comment' => 'CommentCronFundingNotifications',
+				'frequency' => 5,
+				'unitfrequency' => 60,
+				'status' => 0,
+				'test' => isModEnabled('funding'),
+				'priority' => 50,
+			 ),
 		);
 		// Example: $this->cronjobs=array(
 		//    0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>isModEnabled('funding'), 'priority'=>50),

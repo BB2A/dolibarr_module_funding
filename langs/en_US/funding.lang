@@ -466,3 +466,5 @@ ActionPerformed=Action performed
 ViewFunding=View funding
 ViewOrder=View order
 EmailSentBy=Email sent by
+CronFundingNotifications = Grouped funding notifications
+CommentCronFundingNotifications = Sends one grouped email per funding and per recipient for all queued actions (grouping window configurable via FUNDING_NOTIFICATION_GROUPING_WINDOW in seconds, 300 by default).

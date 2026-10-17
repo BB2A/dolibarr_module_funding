@@ -57,15 +57,6 @@ class Funding extends CommonObject
 	 */
 	public $ismultientitymanaged = 0;
 
-	/**
-	 * @var array Pending notification actions to group into a single email per recipient
-	 */
-	public static $pendingNotifications = array();
-
-	/**
-	 * @var bool True when the shutdown flush callback has already been registered
-	 */
-	public static $flushRegistered = false;
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -3229,134 +3220,177 @@ class Funding extends CommonObject
 			return 0;
 		}
 
-		// Queue action; all actions of the same request are grouped into a single email per recipient
-		self::$pendingNotifications[] = array('action' => $action, 'user_id' => $user_modification->id);
-
-		// Flush on shutdown so the grouped email is still sent if the action handler redirects or refreshes the page
-		if (!self::$flushRegistered) {
-			self::$flushRegistered = true;
-			$self = $this;
-			register_shutdown_function(function () use ($self) {
-				$self->flushNotifications();
-			});
+		// Persist action into notification queue; cronFundingNotifications groups all actions
+		// of a funding (even across several requests) into a single email per recipient
+		if ($this->id <= 0) {
+			return 0;
 		}
-		return 0;
+		$now = dol_now();
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."funding_notification (entity, fk_funding, fk_user_action, action, date_creation)";
+		$sql .= " VALUES (".(int) $conf->entity.", ".(int) $this->id.", ".(int) $user_modification->id.", '".$this->db->escape($action)."', '".$this->db->idate($now)."')";
+		if ($this->db->query($sql) <= 0) {
+			dol_syslog(__METHOD__." failed to queue notification action='".$action."' for funding ".$this->id.": ".$this->db->lasterror(), LOG_ERR);
+			return -1;
+		}
+		return 1;
 	}
 
 	/**
-	 * Send one grouped notification email per recipient with all actions queued by sendNotificationToUsers()
+	 * Cron job: send one grouped notification email per funding and per recipient
+	 * with all actions queued during the grouping window, even across several requests
 	 *
-	 * @return  int  Number of emails sent
+	 * @return  int  0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function flushNotifications()
+	public function cronFundingNotifications()
 	{
 		global $conf, $langs, $db;
 
-		if (empty($conf->global->FUNDING_ENABLE_USER_NOTIFICATIONS) || empty(self::$pendingNotifications)) {
-			self::$pendingNotifications = array();
+		$langs->load("funding@funding");
+
+		if (empty($conf->global->FUNDING_ENABLE_USER_NOTIFICATIONS)) {
 			return 0;
 		}
 
-		$actions = self::$pendingNotifications;
-		self::$pendingNotifications = array();
+		$error = 0;
 
-		$sent_count = 0;
+		// Grouping window: only process actions older than this delay so actions performed
+		// by the same user within the window are grouped into a single email
+		$window = 300;
+		if (getDolGlobalInt('FUNDING_NOTIFICATION_GROUPING_WINDOW') > 0) {
+			$window = getDolGlobalInt('FUNDING_NOTIFICATION_GROUPING_WINDOW');
+		}
+		$limitdate = dol_now() - $window;
 
-		// Get list of recipients
-		$recipients = array();
+		// Get all pending actions grouped by funding
+		$sql = "SELECT rowid, fk_funding, action, fk_user_action";
+		$sql .= " FROM ".MAIN_DB_PREFIX."funding_notification";
+		$sql .= " WHERE processed = 0 AND date_creation <= '".$db->idate($limitdate)."'";
+		$sql .= " ORDER BY rowid";
+		$resql = $db->query($sql);
+		if (!$resql) {
+			dol_syslog(__METHOD__." failed to fetch pending notifications: ".$db->lasterror(), LOG_ERR);
+			return -1;
+		}
 
-		// 1. Get internal users assigned to the linked order
-		if ($this->origin == 'order' && $this->origin_id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-				$commande = new Commande($this->db);
-				$commande->fetch($this->origin_id);
+		$rows = array();
+		while ($obj = $db->fetch_object($resql)) {
+			$rows[] = $obj;
+		}
+		$db->free($resql);
 
-			// Get users assigned to the order (sales representatives)
-			if (!empty($commande->array_options['options_fk_user_assigned'])) {
-				foreach ($commande->array_options['options_fk_user_assigned'] as $user_id) {
+		if (empty($rows)) {
+			return 0;
+		}
+
+		// Group rows by funding
+		$byfunding = array();
+		foreach ($rows as $row) {
+			$byfunding[$row->fk_funding][] = $row;
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+
+		foreach ($byfunding as $funding_id => $fundingrows) {
+			$funding = new Funding($db);
+			if ($funding->fetch($funding_id) <= 0) {
+				$error++;
+				continue;
+			}
+			if (!is_object($funding->thirdparty)) {
+				$funding->fetch_thirdparty();
+			}
+
+			// Count each action type
+			$actioncounts = array();
+			$actionuserids = array();
+			$rowids = array();
+			foreach ($fundingrows as $row) {
+				if (!isset($actioncounts[$row->action])) {
+					$actioncounts[$row->action] = 0;
+				}
+				$actioncounts[$row->action]++;
+				$actionuserids[$row->fk_user_action] = $row->fk_user_action;
+				$rowids[] = $row->rowid;
+			}
+
+			// Get list of recipients (same rules as before)
+			$recipients = array();
+
+			if ($funding->origin == 'order' && $funding->origin_id > 0) {
+				require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+				$commande = new Commande($db);
+				$commande->fetch($funding->origin_id);
+
+				if (!empty($commande->array_options['options_fk_user_assigned'])) {
+					foreach ($commande->array_options['options_fk_user_assigned'] as $user_id) {
 						if ($user_id > 0) {
 							$recipients[$user_id] = 'order_assigned';
 						}
 					}
 				}
-
-			// Also get the user who created the order
-			if ($commande->fk_user_author > 0) {
-					$recipients[$commande->fk_user_author] = 'order_author';
+				if ($commande->fk_user_author > 0) {
+						$recipients[$commande->fk_user_author] = 'order_author';
 				}
-		}
+			}
 
-		// 2. Get commercial users of the thirdparty
-		if ($this->fk_soc > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-			$societe = new Societe($this->db);
-			$societe->fetch($this->fk_soc);
+			if ($funding->fk_soc > 0) {
+				require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+				$societe = new Societe($db);
+				$societe->fetch($funding->fk_soc);
 
-			// Get commercial users assigned to this thirdparty
-			if (!empty($societe->array_options['options_fk_user_comm'])) {
-				foreach ($societe->array_options['options_fk_user_comm'] as $user_id) {
+				if (!empty($societe->array_options['options_fk_user_comm'])) {
+					foreach ($societe->array_options['options_fk_user_comm'] as $user_id) {
 						if ($user_id > 0) {
 							$recipients[$user_id] = 'thirdparty_commercial';
 						}
 					}
 				}
-
-			// Also get the fk_user_comm from the funding itself
-			if ($this->fk_user_comm > 0) {
-					$recipients[$this->fk_user_comm] = 'funding_commercial';
-			}
-		}
-
-		// Exclude users who performed one of the actions themselves
-		$actionuserids = array();
-		foreach ($actions as $actionitem) {
-			$actionuserids[$actionitem['user_id']] = $actionitem['user_id'];
-		}
-
-		// 3. Send one email per recipient with all actions grouped
-		if (!empty($recipients)) {
-			require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-			foreach ($recipients as $user_id => $role) {
-				$user = new User($this->db);
-				if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && !in_array($user->id, $actionuserids)) {
-					// Build email subject
-						global $mysoc;
-						$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $this->ref;
-
-						// Build email message
-						$message = $langs->transnoentities('Hello') . ' ' . $user->getFullName($langs) . ',\n\n';
-						$message .= $langs->transnoentities('FundingNotificationIntro') . '\n\n';
-						$message .= $langs->transnoentities('FundingRef') . ': ' . $this->getNomUrl(1) . '\n';
-						$message .= $langs->transnoentities('ThirdParty') . ': ' . $this->thirdparty->getNomUrl(1) . '\n';
-						$message .= $langs->transnoentities('ActionPerformed') . ':\n';
-						$actioncounts = array();
-						foreach ($actions as $actionitem) {
-							if (!isset($actioncounts[$actionitem['action']])) {
-								$actioncounts[$actionitem['action']] = 0;
-							}
-							$actioncounts[$actionitem['action']]++;
-						}
-						foreach ($actioncounts as $actionkey => $actioncount) {
-							if ($actioncount > 1) {
-								$message .= ' - ' . $langs->transnoentities($actionkey) . ' (x' . $actioncount . ')\n';
-							} else {
-								$message .= ' - ' . $langs->transnoentities($actionkey) . '\n';
-							}
-						}
-						$message .= '\n';
-
-						// Add link to order if funding is linked to an order
-						if ($this->origin == 'order' && $this->origin_id > 0) {
-							$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $this->origin_id, 1) . '\n';
-						}
-
-						// Send email
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-						$this->sendMail($from, $user->email, $subject, $message);
-						$sent_count++;
-					}
+				if ($funding->fk_user_comm > 0) {
+						$recipients[$funding->fk_user_comm] = 'funding_commercial';
 				}
 			}
-		return $sent_count;
+
+			// Send one email per recipient with all actions grouped
+			foreach ($recipients as $user_id => $role) {
+				$user = new User($db);
+				if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && !in_array($user->id, $actionuserids)) {
+					global $mysoc;
+
+					$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $funding->ref;
+
+					$message = $langs->transnoentities('Hello') . ' ' . $user->getFullName($langs) . ',\n\n';
+					$message .= $langs->transnoentities('FundingNotificationIntro') . '\n\n';
+					$message .= $langs->transnoentities('FundingRef') . ': ' . $funding->getNomUrl(1) . '\n';
+					$message .= $langs->transnoentities('ThirdParty') . ': ' . $funding->thirdparty->getNomUrl(1) . '\n';
+					$message .= $langs->transnoentities('ActionPerformed') . ':\n';
+					foreach ($actioncounts as $actionkey => $actioncount) {
+						if ($actioncount > 1) {
+							$message .= ' - ' . $langs->transnoentities($actionkey) . ' (x' . $actioncount . ')\n';
+						} else {
+							$message .= ' - ' . $langs->transnoentities($actionkey) . '\n';
+						}
+					}
+					$message .= '\n';
+
+					if ($funding->origin == 'order' && $funding->origin_id > 0) {
+						$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $funding->origin_id, 1) . '\n';
+					}
+
+					$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					$funding->sendMail($from, $user->email, $subject, $message);
+				}
+			}
+
+			// Mark actions as processed
+			$sql = "UPDATE ".MAIN_DB_PREFIX."funding_notification SET processed = 1, date_processed = '".$db->idate(dol_now())."'";
+			$sql .= " WHERE rowid IN (".implode(',', $rowids).")";
+			if (!$db->query($sql)) {
+					$error++;
+					dol_syslog(__METHOD__." failed to mark notifications as processed for funding ".$funding_id.": ".$db->lasterror(), LOG_ERR);
+			}
+		}
+
+		return $error ? -1 : 0;
+	}
 	}
 }

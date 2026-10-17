@@ -1033,11 +1033,6 @@ if ($object->id > 0 && $permissiontoread && (empty($action) || ($action != 'edit
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
-// Send grouped notification email (one per recipient with all actions of this request)
-if (is_object($object) && method_exists($object, 'flushNotifications')) {
-	$object->flushNotifications();
-}
-
 // End of page
 llxFooter();
 $db->close();
