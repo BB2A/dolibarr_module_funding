@@ -10,12 +10,12 @@
 - NEW - 28/09/2026 - PDF : funfoldoc et fundoc affichés en deux colonnes côte à côte pour un meilleur usage de l'espace
 - NEW - 28/09/2026 - PDF : note privée affichée au-dessus de la section "Documents de financement"
 
+- FIX - 30/10/2026 - tms de llx_funding_funding mis à jour automatiquement à chaque modification (DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) + script de migration 1.1.7-1.1.8
 - FIX - 02/10/2026 - Remplace les permissions de gestion par des permissions d'ajout pour certaines action
 - FIX - 01/10/2026 - Met à jour la description PDF pour refléter le contenu des documents de financement
 - FIX - 01/10/2026 - Limite l'envoi des notifications par email aux utilisateurs internes uniquement
 - FIX - 28/09/2026 - PDF : note privée utilise writeHTMLCell pour interpréter correctement les balises HTML
 - FIX - 28/09/2026 - Utilisation des constantes Funding::NB_FUNDOC et Funding::NB_FUNFOLDOC au lieu de $object->NB_*
-- NEW - tms de llx_funding_funding mis à jour automatiquement à chaque modification (DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) + script de migration 1.1.7-1.1.8
 
 
 ## [1.1.7] - 09/2026 Dolibarr 24
