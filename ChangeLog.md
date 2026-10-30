@@ -15,6 +15,7 @@
 - FIX - 01/10/2026 - Limite l'envoi des notifications par email aux utilisateurs internes uniquement
 - FIX - 28/09/2026 - PDF : note privée utilise writeHTMLCell pour interpréter correctement les balises HTML
 - FIX - 28/09/2026 - Utilisation des constantes Funding::NB_FUNDOC et Funding::NB_FUNFOLDOC au lieu de $object->NB_*
+- NEW - tms de llx_funding_funding mis à jour automatiquement à chaque modification (DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) + script de migration 1.1.7-1.1.8
 
 
 ## [1.1.7] - 09/2026 Dolibarr 24
