@@ -3,6 +3,7 @@ name: Security audit (Mistral agent)
 on:
   push:
     branches: ["**"]
+  workflow_dispatch:
 
 jobs:
   audit:
