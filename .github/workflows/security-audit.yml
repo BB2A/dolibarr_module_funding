@@ -1,0 +1,45 @@
+name: Security audit (Mistral agent)
+
+on:
+  push:
+    branches: ["**"]
+
+jobs:
+  audit:
+    if: ${{ !startsWith(github.ref_name, 'security-audit/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Run security audit agent
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          PUSH_EVENT: ${{ toJSON(github.event) }}
+        run: |
+          uv run --with mistralai-agents python - <<'PY'
+          import asyncio, json, os
+
+          from mistralai import agents
+
+          event = json.loads(os.environ["PUSH_EVENT"])
+          payload = {
+              "repository": event.get("repository", {}).get("full_name"),
+              "ref": event.get("ref"),
+              "before": event.get("before"),
+              "after": event.get("after"),
+              "commits": [
+                  {"id": c.get("id"), "message": c.get("message"),
+                   "modified": c.get("modified"), "added": c.get("added"),
+                   "removed": c.get("removed")}
+                  for c in event.get("commits", [])
+              ],
+          }
+
+          agent = agents.Agent.load_from(agent_name="security-audit-agent")
+          result = asyncio.run(agent.run(
+              "A push was made to a repository you audit. Here is the push payload as JSON:\n"
+              + json.dumps(payload)
+              + "\nAudit the pushed commits and follow your audit procedure."
+          ))
+          print(result.text)
+          PY
