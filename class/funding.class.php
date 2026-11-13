@@ -3206,6 +3206,57 @@ class Funding extends CommonObject
 	}
 
 	/**
+	 * Get employees assigned to an object
+	 *
+	 * @param	CommonObject	$object		Any Dolibarr object (Order, Propal, Invoice, etc.)
+	 * @return	array				Array of User objects
+	 */
+	public function getAssignedEmployees($object)
+	{
+		global $db;
+
+		$assignedUsers = array();
+
+		// Add users from standard fields
+		$userFields = array('fk_user_author', 'fk_user_valid', 'fk_user_mod', 'fk_user_create', 'fk_user_approve');
+		foreach ($userFields as $field) {
+			if (!empty($object->$field)) {
+				require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+				$user = new User($db);
+				if ($user->fetch($object->$field) > 0 && $user->employee == 1) {
+					// Only employees
+					$assignedUsers[$user->id] = $user;
+				}
+			}
+		}
+
+		// Add users from element_element table (for multiple assignments)
+		$elementType = $object->element;
+		$sql = "SELECT DISTINCT ee.fk_target_id as user_id";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "element_element as ee";
+		$sql .= " WHERE ee.fk_source = " . (int) $object->id;
+		$sql .= " AND ee.sourcetype = '" . $db->escape($elementType) . "'";
+		$sql .= " AND ee.targettype = 'user'";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($row = $db->fetch_row($resql)) {
+				$userId = $row[0];
+				if (!isset($assignedUsers[$userId])) {
+					require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+					$user = new User($db);
+					if ($user->fetch($userId) > 0 && $user->employee == 1) {
+						$assignedUsers[$user->id] = $user;
+					}
+				}
+			}
+			$db->free($resql);
+		}
+
+		return $assignedUsers;
+	}
+
+	/**
 	 * Send notification email to internal users (employees) only - assigned to order and commercial users of thirdparty
 	 *
 	 * @param   string  $action            Action performed (e.g., "Status changed to X")
@@ -3241,15 +3292,9 @@ class Funding extends CommonObject
 			$commande = new Commande($db);
 			$commande->fetch($this->origin_id);
 
-			if (!empty($commande->array_options['options_fk_user_assigned'])) {
-				foreach ($commande->array_options['options_fk_user_assigned'] as $user_id) {
-					if ($user_id > 0) {
-						$recipients[$user_id] = 'order_assigned';
-					}
-				}
-			}
-			if ($commande->fk_user_author > 0) {
-				$recipients[$commande->fk_user_author] = 'order_author';
+			// Employees assigned to the order (standard fields + element_element assignments)
+			foreach ($this->getAssignedEmployees($commande) as $assigned_user) {
+				$recipients[$assigned_user->id] = 'order_assigned';
 			}
 		}
 
