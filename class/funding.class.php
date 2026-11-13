@@ -3296,6 +3296,16 @@ class Funding extends CommonObject
 			foreach ($this->getAssignedEmployees($commande) as $assigned_user) {
 				$recipients[$assigned_user->id] = 'order_assigned';
 			}
+
+			// Internal contacts of the order
+			$contactids = $commande->getIdContact('internal', '');
+			if (is_array($contactids)) {
+				foreach ($contactids as $contactid) {
+					if ($contactid > 0) {
+						$recipients[$contactid] = 'order_internal_contact';
+					}
+				}
+			}
 		}
 
 		if ($this->fk_soc > 0) {
