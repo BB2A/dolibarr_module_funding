@@ -1924,13 +1924,10 @@ class Funding extends CommonObject
 		}
 
 		if (!$error) {
-			// Send notifications to users if enabled
-			$actionLabel = 'Notify_FUNDING_STATUSFOLDER_CHANGED';
-			if ($status == self::STATUS_FOLDER_SENDORG) $actionLabel = 'Notify_FUNDING_SENDORG';
-			elseif ($status == self::STATUS_FOLDER_LACK) $actionLabel = 'Notify_FUNDING_LACK';
-			elseif ($status == self::STATUS_FOLDER_LACKOK) $actionLabel = 'Notify_FUNDING_LACKOK';
-			elseif ($status == self::STATUS_FOLDER_EXTENSION) $actionLabel = 'Notify_FUNDING_EXTENSION';
-			$this->sendNotificationToUsers($actionLabel, $user);
+			// Send notifications to users if enabled (only when the funding folder is published to the organization)
+			if ($status == self::STATUS_FOLDER_SENDORG) {
+				$this->sendNotificationToUsers('Notify_FUNDING_SENDORG', $user);
+			}
 
 			$this->db->commit();
 			if (!$notrigger && empty($error)) {
@@ -2799,7 +2796,6 @@ class Funding extends CommonObject
 					if ($allcheckcleared && $this->status_folder == $this::STATUS_FOLDER_LACK) {
 						$this->setStatusFolder($user, $this::STATUS_FOLDER_LACKOK);
 					}
-					$this->sendNotificationToUsers('Notify_FUNDING_DOCUMENT_ADDED', $user);
 					$this->message = 'FileAdded';
 					$this->messages[] = $this->message;
 				} else {
@@ -2820,7 +2816,6 @@ class Funding extends CommonObject
 				$resql = $db->query($sql);
 				$this->db->free($resql);
 				if ($resql) {
-					$this->sendNotificationToUsers('Notify_FUNDING_DOCUMENT_DELETED', $user);
 					$this->message = 'FilesDeleted';
 					$this->messages[] = $this->message;
 				} else {
@@ -2843,7 +2838,6 @@ class Funding extends CommonObject
 			$db->free($resql);
 			if ($resql) {
 				$this->setStatusFolder($user, $this::STATUS_FOLDER_LACK);
-				$this->sendNotificationToUsers('Notify_FUNDING_DOCUMENT_REQUESTED', $user);
 				$this->message = 'FilesChecked';
 				$this->messages[] = $this->message;
 			} else {
