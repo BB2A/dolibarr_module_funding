@@ -3297,6 +3297,7 @@ class Funding extends CommonObject
 			$actioncounts = array();
 			$actionuserids = array();
 			$rowids = array();
+			$lastactionuserid = 0;
 			foreach ($fundingrows as $row) {
 				if (!isset($actioncounts[$row->action])) {
 					$actioncounts[$row->action] = 0;
@@ -3304,6 +3305,17 @@ class Funding extends CommonObject
 				$actioncounts[$row->action]++;
 				$actionuserids[$row->fk_user_action] = $row->fk_user_action;
 				$rowids[] = $row->rowid;
+				$lastactionuserid = $row->fk_user_action;
+			}
+
+			// Sender email: use the email of the user who made the last modification,
+			// fallback to the configured sending email if not available
+			$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			if ($lastactionuserid > 0) {
+				$actionuser = new User($db);
+				if ($actionuser->fetch($lastactionuserid) > 0 && !empty($actionuser->email)) {
+					$from = $actionuser->email;
+				}
 			}
 
 			// Get list of recipients (same rules as before)
@@ -3370,7 +3382,6 @@ class Funding extends CommonObject
 						$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $funding->origin_id, 1) . '\n';
 					}
 
-					$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 					if ($funding->sendMail($from, $user->email, $subject, $message) <= 0) {
 						$sendfailed++;
 					}
