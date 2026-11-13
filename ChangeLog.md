@@ -7,7 +7,7 @@
 - NEW - 01/10/2026 - Ajout de l'option FUNDING_ENABLE_USER_NOTIFICATIONS dans les paramètres pour activer/désactiver les notifications utilisateur
 - NEW - 01/10/2026 - Déclenchement automatique des notifications sendNotificationToUsers lors des changements de statut (validation, brouillon, annulation, acceptation, refus, actif, terminé), des changements de statut dossier (envoyé à l'organisme, pièces manquantes, pièces OK, prolongation) et des actions sur les documents (ajout, suppression, demande)
 - NEW - 30/09/2026 - Ajout de la méthode sendNotificationToUsers pour notifier les utilisateurs internes et commerciaux des changements de financement (changement de statut, ajout de documents)
-- FIX - 11/2026 - Les notifications utilisateur sont limitées aux changements de statut du financement et à la publication du dossier (envoi à l'organisme) ; suppression des notifications pour les autres statuts dossier et les actions sur les documents
+- FIX - 11/2026 - Les notifications utilisateur sont limitées aux changements de statut du financement, aux changements de statut dossier et à la publication du dossier (envoi à l'organisme) ; suppression des notifications pour les actions sur les documents
 - FIX - 11/2026 - L'email d'envoi des notifications groupées est celui de l'utilisateur à l'origine de la dernière modification (repli sur l'email configuré si absent)
 - FIX - 11/2026 - Suppression du système de file d'attente et du cron de regroupement : sendNotificationToUsers envoie directement les emails aux destinataires (table llx_funding_notification et job cron CronFundingNotifications supprimés)
 - FIX - 11/2026 - Script de migration 1.1.7-1.1.8 mis à jour pour supprimer la table llx_funding_notification des installations existantes
