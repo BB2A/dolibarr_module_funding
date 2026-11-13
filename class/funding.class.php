@@ -1911,31 +1911,32 @@ class Funding extends CommonObject
 			$error++;
 		}
 
+		$actionLabel = 'Notify_FUNDING_STATUSFOLDER_CHANGED';
+
 		if ($status == self::STATUS_FOLDER_SENDORG) {
 			$triger = 'FUNDING_SENDORG';
+			$actionLabel = 'Notify_FUNDING_SENDORG';
 		} elseif ($status == self::STATUS_FOLDER_LACK) {
 			$triger = 'FUNDING_LACK';
+			$actionLabel = 'Notify_FUNDING_LACK';
 		} elseif ($status == self::STATUS_FOLDER_LACKOK) {
 			$triger = 'FUNDING_LACKOK';
+			$actionLabel = 'Notify_FUNDING_LACKOK';
 		} elseif ($status == self::STATUS_FOLDER_EXTENSION) {
 			$triger = 'FUNDING_EXTENSION';
+			$actionLabel = 'Notify_FUNDING_EXTENSION';
 		} else {
 			$notriger = 1;
 		}
 
 		if (!$error) {
-			// Send notifications to users if enabled (on every folder status change, including folder publication to the organization)
-			$actionLabel = 'Notify_FUNDING_STATUSFOLDER_CHANGED';
-			if ($status == self::STATUS_FOLDER_SENDORG) $actionLabel = 'Notify_FUNDING_SENDORG';
-			elseif ($status == self::STATUS_FOLDER_LACK) $actionLabel = 'Notify_FUNDING_LACK';
-			elseif ($status == self::STATUS_FOLDER_LACKOK) $actionLabel = 'Notify_FUNDING_LACKOK';
-			elseif ($status == self::STATUS_FOLDER_EXTENSION) $actionLabel = 'Notify_FUNDING_EXTENSION';
-			$this->sendNotificationToUsers($actionLabel, $user);
-
 			$this->db->commit();
 			if (!$notrigger && empty($error)) {
 				// Call trigger
 				$result = $this->call_trigger($triger, $user);
+				// Send notifications to users if enabled (on every folder status change, including folder publication to the organization)
+				$this->sendNotificationToUsers($actionLabel, $user);
+
 				if ($result < 0) {
 					$error++;
 				}
