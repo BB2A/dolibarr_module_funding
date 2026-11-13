@@ -444,8 +444,6 @@ NotFundingSoonFinished=Pas de financement bientôt à terme
 FundingMessageMailIntroText = Bonjour %s,
 FundingMessageMailMessageText = Voici vos financements qui arrivent bientôt à terme.
 
-CronFundingNotifications = Notifications financement regroupées
-CommentCronFundingNotifications = Envoie un email regroupé par financement et par destinataire pour toutes les actions mises en file (fenêtre de regroupement paramétrable via FUNDING_NOTIFICATION_GROUPING_WINDOW en secondes, 300 par défaut).
 
 
 #
@@ -460,14 +458,12 @@ Notify_FUNDING_ACCEPTED=Financement accepté
 Notify_FUNDING_DENIED=Financement refusé
 Notify_FUNDING_RUNNING=Financement actif
 Notify_FUNDING_END=Financement terminé
-Notify_FUNDING_STATUSFOLDER_CHANGED=Statut dossier financement modifié
 Notify_FUNDING_SENDORG=Financement envoyé à l'organisme
+Notify_FUNDING_STATUSFOLDER_CHANGED=Statut dossier financement modifié
 Notify_FUNDING_LACK=Financement avec pièces manquantes
 Notify_FUNDING_LACKOK=Financement pièces ok
 Notify_FUNDING_EXTENSION=Financement prolongé
-Notify_FUNDING_DOCUMENT_ADDED=Document ajouté au financement
-Notify_FUNDING_DOCUMENT_DELETED=Document supprimé du financement
-Notify_FUNDING_DOCUMENT_REQUESTED=Document demandé pour le financement
+Notify_FUNDING_FUNFOLLDOC2_ADDED=Dossier de financement ajouté
 FundingNotification=Notification de financement
 FundingNotificationIntro=Un financement a été mis à jour.
 FundingRef=Référence financement
