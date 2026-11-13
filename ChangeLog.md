@@ -10,6 +10,7 @@
 - FIX - 11/2026 - Les notifications utilisateur sont limitées aux changements de statut du financement et à la publication du dossier (envoi à l'organisme) ; suppression des notifications pour les autres statuts dossier et les actions sur les documents
 - FIX - 11/2026 - L'email d'envoi des notifications groupées est celui de l'utilisateur à l'origine de la dernière modification (repli sur l'email configuré si absent)
 - FIX - 11/2026 - Suppression du système de file d'attente et du cron de regroupement : sendNotificationToUsers envoie directement les emails aux destinataires (table llx_funding_notification et job cron CronFundingNotifications supprimés)
+- FIX - 11/2026 - Script de migration 1.1.8-1.1.9 pour supprimer la table llx_funding_notification des installations existantes
 - NEW - 28/09/2026 - PDF : funfoldoc et fundoc affichés en deux colonnes côte à côte pour un meilleur usage de l'espace
 - NEW - 28/09/2026 - PDF : note privée affichée au-dessus de la section "Documents de financement"
 
