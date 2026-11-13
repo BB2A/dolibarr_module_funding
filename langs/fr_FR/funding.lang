@@ -463,6 +463,7 @@ Notify_FUNDING_STATUSFOLDER_CHANGED=Statut dossier financement modifié
 Notify_FUNDING_LACK=Financement avec pièces manquantes
 Notify_FUNDING_LACKOK=Financement pièces ok
 Notify_FUNDING_EXTENSION=Financement prolongé
+Notify_FUNDING_FUNFOLLDOC2_ADDED=Dossier de financement ajouté
 FundingNotification=Notification de financement
 FundingNotificationIntro=Un financement a été mis à jour.
 FundingRef=Référence financement

@@ -456,6 +456,7 @@ Notify_FUNDING_STATUSFOLDER_CHANGED=Funding folder status changed
 Notify_FUNDING_LACK=Funding with missing documents
 Notify_FUNDING_LACKOK=Funding documents ok
 Notify_FUNDING_EXTENSION=Funding extended
+Notify_FUNDING_FUNFOLLDOC2_ADDED=Funding folder added
 FundingNotification=Funding notification
 FundingNotificationIntro=A funding has been updated.
 FundingRef=Funding reference

@@ -2799,6 +2799,10 @@ class Funding extends CommonObject
 					if ($allcheckcleared && $this->status_folder == $this::STATUS_FOLDER_LACK) {
 						$this->setStatusFolder($user, $this::STATUS_FOLDER_LACKOK);
 					}
+					// Send notification to users if enabled when the funding folder file (funfoldoc2) is added
+					if ($doc == 'funfoldoc2') {
+						$this->sendNotificationToUsers('Notify_FUNDING_FUNFOLLDOC2_ADDED', $user);
+					}
 					$this->message = 'FileAdded';
 					$this->messages[] = $this->message;
 				} else {
