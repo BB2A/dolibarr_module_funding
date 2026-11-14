@@ -3233,6 +3233,29 @@ class Funding extends CommonObject
 
 		// Get list of recipients
 		$recipients = array();
+
+		// Add the commercial user assigned to the order if not already included
+		if ($this->fk_soc > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+			$societe = new Societe($db);
+			$societe->fetch($this->fk_soc);
+
+			// Commercial users of the thirdparty
+			$salesreps = $societe->getSalesRepresentatives($user_modification);
+			if (is_array($salesreps)) {
+				foreach ($salesreps as $salesrep) {
+					$user_id = is_array($salesrep) ? $salesrep['id'] : (int) $salesrep;
+					if ($user_id > 0) {
+						$recipients[$user_id] = 'thirdparty_commercial';
+					}
+				}
+			}
+			// Add the commercial user assigned to the funding if not already included
+			// if ($this->fk_user_comm > 0) {
+			// 	$recipients[$this->fk_user_comm] = 'funding_commercial';
+			// }
+		}
+
 		// Add internal contacts of the order if the funding is linked to an order
 		if ($this->origin == 'order' && $this->origin_id > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
@@ -3249,27 +3272,6 @@ class Funding extends CommonObject
 				}
 			}
 		}
-		// Add the commercial user assigned to the order if not already included
-		if ($this->fk_soc > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-			$societe = new Societe($db);
-			$societe->fetch($this->fk_soc);
-
-			// Commercial users of the thirdparty
-			$salesreps = $societe->getSalesRepresentatives($user_modification);
-			if (is_array($salesreps)) {
-				foreach ($salesreps as $salesrep) {
-					$user_id = is_object($salesrep) ? $salesrep->id : (int) $salesrep;
-					if ($user_id > 0) {
-						$recipients[$user_id] = 'thirdparty_commercial';
-					}
-				}
-			}
-			// Add the commercial user assigned to the funding if not already included
-			// if ($this->fk_user_comm > 0) {
-			// 	$recipients[$this->fk_user_comm] = 'funding_commercial';
-			// }
-		}
 
 		// Sender email: the user who made the modification, fallback to configured sending email
 		$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
@@ -3277,12 +3279,13 @@ class Funding extends CommonObject
 			$from = $user_modification->email;
 		}
 
+		require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 		$nbsent = 0;
 		$notified = array();
-		$loop = 0;
 		foreach ($recipients as $user_id => $role) {
 			$userto = new User($db);
 			$userto->fetch($user_id);
+			// Only send email to internal users (employees) with valid email, not linked to a thirdparty, and not the user who made the modification
 			if (is_object($userto) && !empty($userto->email) && $userto->employee == 1 && empty($userto->fk_soc) && $userto->id != $user_modification->id) {
 				$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $this->ref;
 
@@ -3296,17 +3299,16 @@ class Funding extends CommonObject
 					$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $this->origin_id, 1) . "\n";
 				}
 
-				if ($this->sendMail($from, $userto->email, $subject, $message) > 0) {
+				if ($resultsendmail=$this->sendMail($from, $userto->email, $subject, $message) > 0) {
 					$nbsent++;
 					$fullname = trim($userto->firstname . ' ' . $userto->lastname);
 					$notified[] = !empty($fullname) ? $fullname : $userto->email;
 				}
-				$loop++;
 			}
 		}
-		var_dump($recipients, $notified, $nbsent, $loop, $userto);exit;
+
 		// Show the list of notified users (name or email if no name)
-		if (!empty($notified)) {
+		if (!empty($nbsent)) {
 			setEventMessages($langs->trans('FundingNotificationSentTo', implode(', ', $notified)), null, 'mesgs');
 		}
 
