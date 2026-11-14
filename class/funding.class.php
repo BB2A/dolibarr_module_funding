@@ -3314,7 +3314,7 @@ class Funding extends CommonObject
 			$societe->fetch($this->fk_soc);
 
 			// Commercial users of the thirdparty
-			$salesreps = $societe->getSalesRepresentatives();
+			$salesreps = $societe->getSalesRepresentatives($user_modification);
 			if (is_array($salesreps)) {
 				foreach ($salesreps as $salesrep) {
 					$user_id = is_object($salesrep) ? $salesrep->id : (int) $salesrep;
