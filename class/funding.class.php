@@ -3313,8 +3313,11 @@ class Funding extends CommonObject
 			$societe = new Societe($db);
 			$societe->fetch($this->fk_soc);
 
-			if (!empty($societe->array_options['options_fk_user_comm'])) {
-				foreach ($societe->array_options['options_fk_user_comm'] as $user_id) {
+			// Commercial users of the thirdparty
+			$salesreps = $societe->getSalesRepresentatives();
+			if (is_array($salesreps)) {
+				foreach ($salesreps as $salesrep) {
+					$user_id = is_object($salesrep) ? $salesrep->id : (int) $salesrep;
 					if ($user_id > 0) {
 						$recipients[$user_id] = 'thirdparty_commercial';
 					}
