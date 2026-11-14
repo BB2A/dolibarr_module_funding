@@ -3231,11 +3231,9 @@ class Funding extends CommonObject
 			$this->fetch_thirdparty();
 		}
 
-		require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-
 		// Get list of recipients
 		$recipients = array();
-
+		// Add internal contacts of the order if the funding is linked to an order
 		if ($this->origin == 'order' && $this->origin_id > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 			$commande = new Commande($db);
@@ -3251,7 +3249,7 @@ class Funding extends CommonObject
 				}
 			}
 		}
-
+		// Add the commercial user assigned to the order if not already included
 		if ($this->fk_soc > 0) {
 			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 			$societe = new Societe($db);
@@ -3267,9 +3265,10 @@ class Funding extends CommonObject
 					}
 				}
 			}
-			if ($this->fk_user_comm > 0) {
-				$recipients[$this->fk_user_comm] = 'funding_commercial';
-			}
+			// Add the commercial user assigned to the funding if not already included
+			// if ($this->fk_user_comm > 0) {
+			// 	$recipients[$this->fk_user_comm] = 'funding_commercial';
+			// }
 		}
 
 		// Sender email: the user who made the modification, fallback to configured sending email
@@ -3280,12 +3279,14 @@ class Funding extends CommonObject
 
 		$nbsent = 0;
 		$notified = array();
+		$loop = 0;
 		foreach ($recipients as $user_id => $role) {
-			$user = new User($db);
-			if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && empty($user->fk_soc) && $user->id != $user_modification->id) {
+			$userto = new User($db);
+			$userto->fetch($user_id);
+			if (is_object($userto) && !empty($userto->email) && $userto->employee == 1 && empty($userto->fk_soc) && $userto->id != $user_modification->id) {
 				$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $this->ref;
 
-				$message = $langs->transnoentities('Hello') . ' ' . $user->getFullName($langs) . "\n\n";
+				$message = $langs->transnoentities('Hello') . ' ' . $userto->getFullName($langs) . "\n\n";
 				$message .= $langs->transnoentities('FundingNotificationIntro') . "\n\n";
 				$message .= $langs->transnoentities('FundingRef') . ': ' . $this->getNomUrl(1) . "\n";
 				$message .= $langs->transnoentities('ThirdParty') . ': ' . $this->thirdparty->getNomUrl(1) . "\n";
@@ -3295,14 +3296,15 @@ class Funding extends CommonObject
 					$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $this->origin_id, 1) . "\n";
 				}
 
-				if ($this->sendMail($from, $user->email, $subject, $message) > 0) {
+				if ($this->sendMail($from, $userto->email, $subject, $message) > 0) {
 					$nbsent++;
-					$fullname = trim($user->firstname . ' ' . $user->lastname);
-					$notified[] = !empty($fullname) ? $fullname : $user->email;
+					$fullname = trim($userto->firstname . ' ' . $userto->lastname);
+					$notified[] = !empty($fullname) ? $fullname : $userto->email;
 				}
+				$loop++;
 			}
 		}
-
+		var_dump($recipients, $notified, $nbsent, $loop, $userto);exit;
 		// Show the list of notified users (name or email if no name)
 		if (!empty($notified)) {
 			setEventMessages($langs->trans('FundingNotificationSentTo', implode(', ', $notified)), null, 'mesgs');
