@@ -469,6 +469,7 @@ FundingNotificationIntro=Un financement a été mis à jour.
 FundingRef=Référence financement
 ThirdParty=Tiers
 ActionPerformed=Action effectuée
+FundingNotificationSentTo=Notifications envoyées à : %s
 ViewFunding=Voir le financement
 ViewOrder=Voir la commande
 EmailSentBy=Email envoyé par

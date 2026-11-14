@@ -462,6 +462,7 @@ FundingNotificationIntro=A funding has been updated.
 FundingRef=Funding reference
 ThirdParty=Third party
 ActionPerformed=Action performed
+FundingNotificationSentTo=Notifications sent to: %s
 ViewFunding=View funding
 ViewOrder=View order
 EmailSentBy=Email sent by

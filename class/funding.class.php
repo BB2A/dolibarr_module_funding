@@ -3279,6 +3279,7 @@ class Funding extends CommonObject
 		}
 
 		$nbsent = 0;
+		$notified = array();
 		foreach ($recipients as $user_id => $role) {
 			$user = new User($db);
 			if ($user->fetch($user_id) > 0 && !empty($user->email) && $user->employee == 1 && empty($user->fk_soc) && $user->id != $user_modification->id) {
@@ -3296,8 +3297,15 @@ class Funding extends CommonObject
 
 				if ($this->sendMail($from, $user->email, $subject, $message) > 0) {
 					$nbsent++;
+					$fullname = trim($user->firstname . ' ' . $user->lastname);
+					$notified[] = !empty($fullname) ? $fullname : $user->email;
 				}
 			}
+		}
+
+		// Show the list of notified users (name or email if no name)
+		if (!empty($notified)) {
+			setEventMessages($langs->trans('FundingNotificationSentTo', implode(', ', $notified)), null, 'mesgs');
 		}
 
 		return $nbsent;
