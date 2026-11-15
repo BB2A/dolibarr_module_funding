@@ -3289,14 +3289,14 @@ class Funding extends CommonObject
 			if (is_object($userto) && !empty($userto->email) && $userto->employee == 1 && empty($userto->fk_soc) && $userto->status == User::STATUS_ACTIVE && $userto->id != $user_modification->id) {
 				$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $this->ref;
 
-				$message = $langs->transnoentities('Hello') . ' ' . $userto->getFullName($langs) . "\n\n";
-				$message .= $langs->transnoentities('FundingNotificationIntro') . "\n\n";
-				$message .= $langs->transnoentities('FundingRef') . ': ' . $this->getNomUrl(1) . "\n";
-				$message .= $langs->transnoentities('ThirdParty') . ': ' . $this->thirdparty->getNomUrl(1) . "\n";
-				$message .= $langs->transnoentities('ActionPerformed') . ': ' . $langs->transnoentities($action) . "\n\n";
+				$message = $langs->transnoentities('Hello') . ' ' . $userto->getFullName($langs) . '<br/>';
+				$message .= $langs->transnoentities('FundingNotificationIntro') . "<br/><br/>";
+				$message .= $langs->transnoentities('FundingRef') . ':  <a href="'.dol_buildpath('/funding/funding_card.php', 1).'?id='.$this->id.'">'.$this->ref.'</a><br/>';
+				$message .= $langs->transnoentities('ThirdParty') . ': ' . $this->thirdparty->nom . ' (' . $this->thirdparty->name_alias . ')<br/>';
+				$message .= $langs->transnoentities('ActionPerformed') . ': ' . $langs->transnoentities($action) . "<br/><br/>";
 
 				if ($this->origin == 'order' && $this->origin_id > 0) {
-					$message .= $langs->transnoentities('ViewOrder') . ': ' . dol_buildpath('/commande/card.php?id=' . $this->origin_id, 1) . "\n";
+					$message .= $langs->transnoentities('ViewOrder') . ': <a href="'.dol_buildpath('/commande/card.php', 1) . '?id=' . $this->origin_id . '">' . $commande->ref . '</a><br/>';
 				}
 
 				if ($resultsendmail=$this->sendMail($from, $userto->email, $subject, $message) > 0) {

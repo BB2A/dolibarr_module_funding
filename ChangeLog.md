@@ -10,6 +10,7 @@
 - FIX - 15/11/2026 - Ajouter une vérification de l'état de la commande avant d'ajouter les contacts internes pour l'envoi des notifications.
 - FIX - 15/11/2026 - Supprimer une requête SQL inutile dans la classe Funding
 - FIX - 15/11/2026 - Ajouter une vérification de l'état actif des utilisateurs internes avant l'envoi des notifications
+- FIX - 15/11/2026 - Améliorer le format des notifications par e-mail avec des liens cliquables
 
 ## [1.1.8] - 00/2026 Dolibarr 24
 - PHP min 8
