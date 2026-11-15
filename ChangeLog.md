@@ -7,7 +7,7 @@
 
 - NEW - 
 
-- FIX - 
+- FIX - 15/11/2026 - Supprimer une requête SQL inutile dans la classe Funding
 
 
 ## [1.1.8] - 00/2026 Dolibarr 24
