@@ -3261,13 +3261,14 @@ class Funding extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 			$commande = new Commande($db);
 			$commande->fetch($this->origin_id);
-
-			// Internal contacts of the order
-			$contactids = $commande->getIdContact('internal', '');
-			if (is_array($contactids)) {
-				foreach ($contactids as $contactid) {
-					if ($contactid > 0) {
-						$recipients[$contactid] = 'order_internal_contact';
+			if ($commande->status < Commande::STATUS_CLOSED) {
+				// Internal contacts of the order
+				$contactids = $commande->getIdContact('internal', '');
+				if (is_array($contactids)) {
+					foreach ($contactids as $contactid) {
+						if ($contactid > 0) {
+							$recipients[$contactid] = 'order_internal_contact';
+						}
 					}
 				}
 			}
