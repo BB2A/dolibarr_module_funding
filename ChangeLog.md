@@ -7,7 +7,7 @@
 
 - NEW - 
 
-- FIX - 
+- FIX - 15/11/2026 - Ajouter une vérification de l'état de la commande avant d'ajouter les contacts internes pour l'envoi des notifications.
 
 
 ## [1.1.8] - 00/2026 Dolibarr 24
