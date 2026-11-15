@@ -1635,7 +1635,6 @@ class Funding extends CommonObject
 
 		dol_syslog(__METHOD__.' $this->id='.$this->id.', folder_number='.$folder_number, LOG_DEBUG);
 
-		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = $this->db->error();
 			$error++;
