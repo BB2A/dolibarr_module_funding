@@ -1,29 +1,30 @@
 # CHANGELOG FUNDING FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
+
 ## [DEV] - 00/2026 Dolibarr 24
 - PHP min 8
 - Dolibarr min 18
 
-- NEW - 01/10/2026 - Ajout de l'option FUNDING_ENABLE_USER_NOTIFICATIONS dans les paramètres pour activer/désactiver les notifications utilisateur
-- NEW - 01/10/2026 - Déclenchement automatique des notifications sendNotificationToUsers lors des changements de statut (validation, brouillon, annulation, acceptation, refus, actif, terminé), des changements de statut dossier (envoyé à l'organisme, pièces manquantes, pièces OK, prolongation) et des actions sur les documents (ajout, suppression, demande)
-- NEW - 30/09/2026 - Ajout de la méthode sendNotificationToUsers pour notifier les utilisateurs internes et commerciaux des changements de financement (changement de statut, ajout de documents)
-- FIX - 11/2026 - Les notifications utilisateur sont limitées aux changements de statut du financement, aux changements de statut dossier et à la publication du dossier (envoi à l'organisme) ; suppression des notifications pour les actions sur les documents
-- NEW - 11/2026 - Notification utilisateur lors de l'ajout du fichier dossier de financement (funfoldoc2)
-- NEW - 11/2026 - Ajout de la méthode getAssignedEmployees pour récupérer les employés assignés à un objet ; les notifications utilisateur l'utilisent pour la commande d'origine en plus des commerciaux
-- NEW - 11/2026 - Les notifications incluent également les contacts internes de la commande d'origine (getIdContact source internal)
-- FIX - 11/2026 - Utilise getSalesRepresentatives() de la classe Societe pour les commerciaux du tiers au lieu du champ extrafield, avec les classes chargées via require_once
-- FIX - 11/2026 - L'email d'envoi des notifications groupées est celui de l'utilisateur à l'origine de la dernière modification (repli sur l'email configuré si absent)
-- FIX - 11/2026 - Suppression du système de file d'attente et du cron de regroupement : sendNotificationToUsers envoie directement les emails aux destinataires (table llx_funding_notification et job cron CronFundingNotifications supprimés)
-- FIX - 11/2026 - Script de migration 1.1.7-1.1.8 mis à jour pour supprimer la table llx_funding_notification des installations existantes
+- NEW - 
+
+- FIX - 
+
+
+## [1.1.8] - 00/2026 Dolibarr 24
+- PHP min 8
+- Dolibarr min 18
+
 - NEW - 28/09/2026 - PDF : funfoldoc et fundoc affichés en deux colonnes côte à côte pour un meilleur usage de l'espace
 - NEW - 28/09/2026 - PDF : note privée affichée au-dessus de la section "Documents de financement"
+- NEW - 30/09/2026 - Ajout de la méthode sendNotificationToUsers pour notifier les utilisateurs internes et commerciaux des changements de financement avec l'option FUNDING_ENABLE_USER_NOTIFICATIONS. Déclenchement automatique des notifications lors des changements de statut (validation, brouillon, annulation, acceptation, refus, actif, terminé), des changements de statut dossier (envoyé à l'organisme, pièces manquantes, pièces OK, prolongation) ainsi lors de l'ajout du fichier "Dossier de financement" (funfoldoc2)
 
+
+- FIX - 28/09/2026 - Utilisation des constantes Funding::NB_FUNDOC et Funding::NB_FUNFOLDOC au lieu de $object->NB_*
+- FIX - 28/09/2026 - PDF : note privée utilise writeHTMLCell pour interpréter correctement les balises HTML
 - FIX - 30/10/2026 - tms de llx_funding_funding mis à jour automatiquement à chaque modification (DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) + script de migration 1.1.7-1.1.8
-- FIX - 02/10/2026 - Remplace les permissions de gestion par des permissions d'ajout pour certaines action
 - FIX - 01/10/2026 - Met à jour la description PDF pour refléter le contenu des documents de financement
 - FIX - 01/10/2026 - Limite l'envoi des notifications par email aux utilisateurs internes uniquement
-- FIX - 28/09/2026 - PDF : note privée utilise writeHTMLCell pour interpréter correctement les balises HTML
-- FIX - 28/09/2026 - Utilisation des constantes Funding::NB_FUNDOC et Funding::NB_FUNFOLDOC au lieu de $object->NB_*
+- FIX - 02/10/2026 - Remplace les permissions de gestion par des permissions d'ajout pour certaines action
 
 
 ## [1.1.7] - 09/2026 Dolibarr 24
