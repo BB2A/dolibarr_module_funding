@@ -3285,8 +3285,8 @@ class Funding extends CommonObject
 		foreach ($recipients as $user_id => $role) {
 			$userto = new User($db);
 			$userto->fetch($user_id);
-			// Only send email to internal users (employees) with valid email, not linked to a thirdparty, and not the user who made the modification
-			if (is_object($userto) && !empty($userto->email) && $userto->employee == 1 && empty($userto->fk_soc) && $userto->id != $user_modification->id) {
+			// Only send email to internal users (employees) with valid email, not linked to a thirdparty, still active, and not the user who made the modification
+			if (is_object($userto) && !empty($userto->email) && $userto->employee == 1 && empty($userto->fk_soc) && $userto->status == User::STATUS_ACTIVE && $userto->id != $user_modification->id) {
 				$subject = getDolGlobalString('MAIN_APPLICATION_TITLE') . ' - ' . $langs->transnoentities('FundingNotification') . ' - ' . $this->ref;
 
 				$message = $langs->transnoentities('Hello') . ' ' . $userto->getFullName($langs) . "\n\n";
