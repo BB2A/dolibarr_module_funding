@@ -354,9 +354,10 @@ class FundingApi extends DolibarrApi
 			throw new RestException(404, 'Coefficient not found');
 		}
 
-		if ($this->coefficient->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->coefficient->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting Coefficient : '.$this->coefficient->error);
-		} elseif ($this->coefficient->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting Coefficient : '.$this->coefficient->error);
 		}
 
@@ -422,7 +423,7 @@ class FundingApi extends DolibarrApi
 	 */
 	public function getFunding($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('funding', 'funding', 'read')) {
+		if (!DolibarrApiAccess::$user->hasRight('funding', 'read')) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('funding', $id, 'funding_funding')) {
@@ -814,9 +815,10 @@ class FundingApi extends DolibarrApi
 			throw new RestException(404, 'Funding not found');
 		}
 
-		if ($this->funding->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->funding->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting Funding : '.$this->funding->error);
-		} elseif ($this->funding->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting Funding : '.$this->funding->error);
 		}
 
@@ -2382,9 +2384,10 @@ class FundingApi extends DolibarrApi
 			throw new RestException(404, 'Retention not found');
 		}
 
-		if ($this->retention->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->retention->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting Retention : '.$this->retention->error);
-		} elseif ($this->retention->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting Retention : '.$this->retention->error);
 		}
 

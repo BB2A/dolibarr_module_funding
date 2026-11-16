@@ -459,9 +459,11 @@ class Funding extends CommonObject
 		$document = '';
 
 		if ($typedoc == 'propal') {
+			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$document = new propal($db);
 		}
 		if ($typedoc == 'order') {
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$document = new commande($db);
 		}
 
@@ -1116,11 +1118,11 @@ class Funding extends CommonObject
 
 					if ($this->amount_rent_edit < $this->amount_rent) {
 						$this->amount_rent_edit = $this->amount_rent;
-						if ($this->origin == 'PROPAL') {
+						if ($this->origin == 'propal') {
 							setEventMessages($langs->trans("amountRentEdit<amountRent"), null, 'errors');
 						}
 					}
-					if ($this->amount_rent_edit > $this->amount_rent && $this->origin == 'PROPAL') {
+					if ($this->amount_rent_edit > $this->amount_rent && $this->origin == 'propal') {
 						setEventMessages($langs->trans("amountRentEdit>amountRent"), null);
 					}
 
