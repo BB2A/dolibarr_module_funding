@@ -8,6 +8,7 @@
 - NEW - 
 
 - FIX - 16/11/2026 - Corriger l'état des utilisateurs internes pour l'envoi des notifications par e-mail
+- FIX - 16/11/2026 - Ajouter la récupération des contacts internes liés à une proposition dans la classe Funding
 
 
 ## [1.1.9] - 11/2026 Dolibarr 24
