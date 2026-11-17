@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2020-2025	Anthony Berton 			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2020-2026	Anthony Berton 			<anthony.berton@bb2a.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ function fundingPrepareHead($object)
 	$head[$h][1] = $langs->trans("FundingCard");
 	$head[$h][2] = 'card';
 	$h++;
-	
+
 	$mode = 'list';
 	if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
 		$mode = 'messaging';

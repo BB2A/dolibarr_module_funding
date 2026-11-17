@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2020-2025	Anthony Berton 			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2020-2026	Anthony Berton 			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ if ($user->socid > 0) accessforbidden();
 if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if ($user->socid > 0){
+if ($user->socid > 0) {
 	accessforbidden();
 }
 if (!isModEnabled("funding")) {
@@ -285,26 +285,26 @@ if ($object->id > 0) {
 	}
 	print '<div class="tabsAction">';
 		$morehtmlright = '';
-		if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
-			$messagingUrl = dol_buildpath("/funding/funding_agenda.php", 1).'?id='.$object->id.'&mode='.$mode;
-			if ($mode != 'messaging') {
-				$valbtnmessaging = 2;
-				$valbtnlist = 1;
-			} else {
-				$valbtnmessaging = 1;
-				$valbtnlist = 2;
-			}
-			$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', $valbtnmessaging);
-			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', $valbtnlist);
+	if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
+		$messagingUrl = dol_buildpath("/funding/funding_agenda.php", 1).'?id='.$object->id.'&mode='.$mode;
+		if ($mode != 'messaging') {
+			$valbtnmessaging = 2;
+			$valbtnlist = 1;
+		} else {
+			$valbtnmessaging = 1;
+			$valbtnlist = 2;
 		}
+		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', $valbtnmessaging);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', $valbtnlist);
+	}
 
-		if (isModEnabled('agenda')) {
-			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-				$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
-			} else {
-				$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', 0);
-			}
+	if (isModEnabled('agenda')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+		} else {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', 0);
 		}
+	}
 	print '</div>';
 
 
