@@ -282,6 +282,20 @@ class ActionsFunding
 	{
 		global $user;
 
+		// Called by document.php and viewimage.php (contexts 'document' and 'viewimage') when downloading
+		// or previewing a funding document. Since Dolibarr 24.0.3, the core also applies the rule of users
+		// restricted to their thirdparties (requires the permission "see all thirdparties"). Access to funding
+		// objects and their documents is governed by the module permissions only, so we allow any user
+		// with the funding read or manage permission, like on Dolibarr < 24.0.3.
+		if ($parameters['features'] == 'funding') {
+			if (!empty($user->rights->funding->read) || !empty($user->rights->funding->manage)) {
+				$this->results['result'] = 1;
+			} else {
+				$this->results['result'] = 0;
+			}
+			return 1;
+		}
+
 		if ($parameters['features'] == 'myobject') {
 			if ($user->hasRight('funding', 'myobject', 'read')) {
 				$this->results['result'] = 1;
