@@ -7,6 +7,14 @@
 
 - NEW - 
 
+- FIX - 
+
+## [1.1.10] - 11/2026 Dolibarr 24
+- PHP min 8
+- Dolibarr min 18
+
+- NEW - 
+
 - FIX - 16/11/2026 - Corriger l'état des utilisateurs internes pour l'envoi des notifications par e-mail
 - FIX - 16/11/2026 - Ajouter la récupération des contacts internes liés à une proposition dans la classe Funding
 - FIX - 17/11/2026 - Remplacer dol_fiche_head par dol_get_fiche_head et dol_fiche_end par dol_get_fiche_end dans plusieurs fichiers
