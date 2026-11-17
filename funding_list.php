@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020-2023 BERTON Anthony 			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2020-2026 BERTON Anthony 			<anthony.berton@bb2a.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
