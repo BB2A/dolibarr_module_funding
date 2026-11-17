@@ -547,11 +547,11 @@ if ($typedoc == 'propal') {
 	$prop->fetch_thirdparty();
 
 	$head = propal_prepare_head($prop);
-	dol_fiche_head($head, 'Funding', $langs->trans("Proposal"), -1, 'propal');
+	print dol_get_fiche_head($head, 'Funding', $langs->trans("Proposal"), -1, 'propal');
 } elseif ($typedoc == 'order') {
 	// Display the order frame
 	$head = commande_prepare_head($ord);
-	dol_fiche_head($head, 'Funding', $langs->trans("CustomerOrder"), -1, 'order');
+	print dol_get_fiche_head($head, 'Funding', $langs->trans("CustomerOrder"), -1, 'order');
 }
 
 if ($object->id > 0 && $permissiontoread && (empty($action) || ($action != 'create'))) {
@@ -623,7 +623,7 @@ if ($action == 'create' && $permissiontoadd) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	// Set some default values
 	if (! GETPOSTISSET('fk_duration')) $_POST['fk_duration'] = isset($conf->global->FUNDING_DEFAULT_DURATION) ? $conf->global->FUNDING_DEFAULT_DURATION : '';
@@ -642,7 +642,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 	print '</table>'."\n";
 	print '</div>';
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -684,7 +684,7 @@ if (($id || $ref) && $action == 'edit' && $permissiontoadd) {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -873,7 +873,7 @@ if ($object->id > 0 && $permissiontoread && (empty($action) || ($action != 'edit
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
