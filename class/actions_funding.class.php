@@ -288,7 +288,7 @@ class ActionsFunding
 		// objects and their documents is governed by the module permissions only, so we allow any user
 		// with the funding read or manage permission, like on Dolibarr < 24.0.3.
 		if ($parameters['features'] == 'funding') {
-			if (!empty($user->rights->funding->read) || !empty($user->rights->funding->manage)) {
+			if (empty($user->fk_soc) || ($user->hasRight('funding', 'funding->read') || $user->hasRight('funding', 'funding->manage'))) {
 				$this->results['result'] = 1;
 			} else {
 				$this->results['result'] = 0;
