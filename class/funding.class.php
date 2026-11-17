@@ -3258,7 +3258,7 @@ class Funding extends CommonObject
 
 		// Add internal contacts of the propal if the funding is linked to a propal
 		if ($this->origin == 'propal' && $this->origin_id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/comm/class/propal.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 			$propal = new Propal($db);
 			$propal->fetch($this->origin_id);
 		}
@@ -3304,7 +3304,7 @@ class Funding extends CommonObject
 				$message .= $langs->transnoentities('ActionPerformed') . ': ' . $langs->transnoentities($action) . "<br/><br/>";
 
 				if ($this->origin == 'propal' && $this->origin_id > 0) {
-					$message .= $langs->transnoentities('ViewPropal') . ': <a href="'.dol_buildpath('/comm/propal.php', 1) . '?id=' . $this->origin_id . '">' . $propal->ref . '</a><br/>';
+					$message .= $langs->transnoentities('ViewPropal') . ': <a href="'.dol_buildpath('/comm/propal/card.php', 1) . '?id=' . $this->origin_id . '">' . $propal->ref . '</a><br/>';
 				}
 				if ($this->origin == 'order' && $this->origin_id > 0) {
 					$message .= $langs->transnoentities('ViewOrder') . ': <a href="'.dol_buildpath('/commande/card.php', 1) . '?id=' . $this->origin_id . '">' . $commande->ref . '</a><br/>';
