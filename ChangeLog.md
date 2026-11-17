@@ -6,12 +6,12 @@
 - Dolibarr min 18
 
 - NEW - 
-- FIX - Accès aux documents de financement régi par les permissions du module : le hook restrictedArea (contexts document et viewimage) permet à un utilisateur avec la permission funding « Consulter » ou « Gérer » de télécharger et prévisualiser les documents de financement, sans exiger le droit « Voir tous les tiers » requis par le cœur depuis Dolibarr 24.0.3. Compatible Dolibarr 18 à 24 sans régression (aucun effet sur les versions antérieures à 24.0.3)
 
 - FIX - 16/11/2026 - Corriger l'état des utilisateurs internes pour l'envoi des notifications par e-mail
 - FIX - 16/11/2026 - Ajouter la récupération des contacts internes liés à une proposition dans la classe Funding
 - FIX - 17/11/2026 - Remplacer dol_fiche_head par dol_get_fiche_head et dol_fiche_end par dol_get_fiche_end dans plusieurs fichiers
 FIX - 17/11/2026 - Remplacer les vérifications de droits d'accès par la méthode hasRight dans plusieurs fichiers
+- FIX - 17/11/2026 - Accès aux documents de financement régi par les permissions du module : le hook restrictedArea (contexts document et viewimage) permet à un utilisateur avec la permission funding « Consulter » ou « Gérer » de télécharger et prévisualiser les documents de financement, sans exiger le droit « Voir tous les tiers » requis par le cœur depuis Dolibarr 24.0.3. Compatible Dolibarr 18 à 24 sans régression (aucun effet sur les versions antérieures à 24.0.3)
 
 
 ## [1.1.9] - 11/2026 Dolibarr 24
