@@ -202,9 +202,9 @@ jQuery(document).ready(function() {
 if ($object->id > 0 && (empty($action) || ($action != 'create'))) {
 	print load_fiche_titre($langs->trans("Coefficient"), '', 'object_'.$object->picto.' infobox-contrat valignmiddle widthpictotitle pictotitle');
 	$head = coefficientPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Coefficient"), -1, $object->picto.' infobox-contrat valignmiddle widthpictotitle pictotitle');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Coefficient"), -1, $object->picto.' infobox-contrat valignmiddle widthpictotitle pictotitle');
 
-	
+
 	$linkback = '<a href="'.dol_buildpath('/funding/coefficient_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
@@ -223,7 +223,7 @@ if ($action == 'create') {
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	// Set some default values
 	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
@@ -238,7 +238,7 @@ if ($action == 'create') {
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -253,7 +253,6 @@ if ($action == 'create') {
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit') {
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -261,7 +260,7 @@ if (($id || $ref) && $action == 'edit') {
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
@@ -273,7 +272,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -285,7 +284,7 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
-	
+
 	$formconfirm = '';
 
 	// Confirmation to delete
@@ -319,7 +318,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
