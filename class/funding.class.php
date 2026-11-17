@@ -2814,6 +2814,7 @@ class Funding extends CommonObject
 			}
 			// Delete document
 		} elseif ($action == 'deletefile' && !empty($upload_dir) && $file) {
+			$result = 0;
 			$file = $upload_dir.'/'.$file;
 			if (file_exists($file)) {
 				$result = dol_delete_file($file);
