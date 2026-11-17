@@ -110,8 +110,8 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->funding->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissiontoread = $user->rights->funding->retention->read;
-$permissiontoadd = $user->rights->funding->retention->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->hasRight('funding', 'retention', 'read');
+$permissiontoadd = $user->hasRight('funding', 'retention', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check - Protection if external user
 if (isset($user->socid) && $user->socid > 0) {
@@ -237,7 +237,7 @@ if ($object->id > 0) {
 	$out = '&origin='.urlencode($object->element.'@'.$object->module).'&originid='.urlencode($object->id);
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') $out .= '&socid='.urlencode($objthirdparty->id);
@@ -249,28 +249,28 @@ if ($object->id > 0) {
 
 	print '<div class="tabsAction">';
 		$morehtmlright = '';
-		if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
-			$messagingUrl = dol_buildpath("/funding/retention_agenda.php", 1).'?id='.$object->id;
-			if ($mode != 'messaging') {
-				$messagingUrl .= '&mode=messaging';
-				$valbtnmessaging = 2;
-				$valbtnlist = 1;
-			} else {
-				$messagingUrl .= '&mode=list';
-				$valbtnmessaging = 1;
-				$valbtnlist = 2;
-			}
-			$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', $valbtnmessaging);
-			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', $valbtnlist);
+	if (version_compare(DOL_VERSION, '22.0.0', '>=')) {
+		$messagingUrl = dol_buildpath("/funding/retention_agenda.php", 1).'?id='.$object->id;
+		if ($mode != 'messaging') {
+			$messagingUrl .= '&mode=messaging';
+			$valbtnmessaging = 2;
+			$valbtnlist = 1;
+		} else {
+			$messagingUrl .= '&mode=list';
+			$valbtnmessaging = 1;
+			$valbtnlist = 2;
 		}
+		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', $valbtnmessaging);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', $valbtnlist);
+	}
 
-		if (isModEnabled('agenda')) {
-			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-				$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
-			} else {
-				$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', 0);
-			}
+	if (isModEnabled('agenda')) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+		} else {
+			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', 0);
 		}
+	}
 	print '</div>';
 
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

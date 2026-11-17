@@ -208,11 +208,11 @@ if (is_array(isset($extrafields->attributes[$object->table_element]['label']) ? 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->funding->read;
-$permissiontoadd = $user->rights->funding->write;
-$permissiontodelete = $user->rights->funding->delete;
+$permissiontoread = $user->hasRight('funding', 'read');
+$permissiontoadd = $user->hasRight('funding', 'write');
+$permissiontodelete = $user->hasRight('funding', 'delete');
 // Used by the send_mail_org function
-$permissionmanage = $user->rights->funding->manage;
+$permissionmanage = $user->hasRight('funding', 'manage');
 
 // Security check - Protection if external user
 if (isset($user->socid) && $user->socid > 0) {
@@ -614,7 +614,7 @@ if ($socid > 0) {
 	}
 }
 // Filter authorization to view specific funding records - BB2A
-if (empty($user->rights->societe->client->voir) && empty($socid)) {
+if (empty($user->hasRight('societe', 'client', 'voir')) && empty($socid)) {
 	$sql.= " AND (t.fk_user_comm = ".$user->id." OR t.fk_user_creat = ".$user->id." OR t.fk_user_modif = ".$user->id.")";
 }
 
