@@ -102,11 +102,11 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->funding->retention->read;
-$permissiontoadd = $user->rights->funding->retention->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->funding->retention->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->funding->retention->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->funding->retention->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('funding', 'retention', 'read');
+$permissiontoadd = $user->hasRight('funding', 'retention', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('funding', 'retention', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('funding', 'retention', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('funding', 'retention', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->funding->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -263,7 +263,6 @@ if ($action == 'create') {
 
 // Part to edit record
 if (($id || $ref) && $action == 'edit') {
-
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -295,7 +294,7 @@ if (($id || $ref) && $action == 'edit') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
-	
+
 	$formconfirm = '';
 
 	// Confirmation to delete
@@ -367,50 +366,51 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	/*
 	 * Lines
+	 * TODO delet ?
 	 */
 
-	if (!empty($object->table_element_line)) {
-		// Show object lines
-		$result = $object->getLinesArray();
+	// if (!empty($object->table_element_line)) {
+	// 	// Show object lines
+	// 	$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-		<input type="hidden" name="token" value="' . newToken().'">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="id" value="' . $object->id.'">
-		';
+	// 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	// 	<input type="hidden" name="token" value="' . newToken().'">
+	// 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
+	// 	<input type="hidden" name="mode" value="">
+	// 	<input type="hidden" name="id" value="' . $object->id.'">
+	// 	';
 
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
-		}
+	// 	if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
+	// 		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+	// 	}
 
-		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		}
+	// 	print '<div class="div-table-responsive-no-min">';
+	// 	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+	// 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+	// 	}
 
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		}
+	// 	if (!empty($object->lines)) {
+	// 		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+	// 	}
 
-		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
-			if ($action != 'editline') {
-				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
+	// 	// Form to add new line
+	// 	if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
+	// 		if ($action != 'editline') {
+	// 			// Add products/services form
+	// 			$object->formAddObjectLine(1, $mysoc, $soc);
 
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
+	// 			$parameters = array();
+	// 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	// 		}
+	// 	}
 
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '</table>';
-		}
-		print '</div>';
+	// 	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
+	// 		print '</table>';
+	// 	}
+	// 	print '</div>';
 
-		print "</form>\n";
-	}
+	// 	print "</form>\n";
+	// }
 
 
 	// Buttons for actions
@@ -491,8 +491,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->funding->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->funding->retention->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->funding->retention->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('funding', 'retention', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('funding', 'retention', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('funding:Retention', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

@@ -84,7 +84,7 @@ function getCustomerFundingPieChart($socid = 0)
 
 	$result= '';
 
-	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
+	if (empty($conf->propal->enabled) || empty($user->hasRight('propal', 'lire'))) {
 		return '';
 	}
 
@@ -209,7 +209,7 @@ function getCustomerFundingPieChart2($socid = 0)
 
 	$result= '';
 
-	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
+	if (empty($conf->propal->enabled) || empty($user->hasRight('propal', 'lire'))) {
 		return '';
 	}
 

@@ -297,7 +297,7 @@ class ActionsFunding
 		}
 
 		if ($parameters['features'] == 'myobject') {
-			if ($user->rights->funding->myobject->read) {
+			if ($user->hasRight('funding', 'myobject', 'read')) {
 				$this->results['result'] = 1;
 				return 1;
 			} else {
@@ -433,13 +433,13 @@ class ActionsFunding
 	{
 		global $langs, $conf, $db, $user;
 
-		if ($user->rights->funding->lists) {
+		if ($user->hasRight('funding', 'lists')) {
 			$contexts = explode(':', $parameters['context']);
 
 			$result = '';
 			$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-			if (!empty($conf->funding->enabled) && $user->rights->funding->read) {
+			if (!empty($conf->funding->enabled) && $user->hasRight('funding', 'read')) {
 				dol_include_once('/funding/class/funding.class.php');
 
 				$sql = 'SELECT rowid, ref, amount_total, amount_rent, fk_duration, date_end, origin, status';

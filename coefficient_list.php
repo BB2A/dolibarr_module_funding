@@ -149,9 +149,9 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->funding->coefficient->read;
-$permissiontoadd = $user->rights->funding->coefficient->write;
-$permissiontodelete = $user->rights->funding->coefficient->delete;
+$permissiontoread = $user->hasRight('funding', 'coefficient', 'read');
+$permissiontoadd = $user->hasRight('funding', 'coefficient', 'write');
+$permissiontodelete = $user->hasRight('funding', 'coefficient', 'delete');
 
 // Security check - Protection if external user
 if (isset($user->socid) && $user->socid > 0) {

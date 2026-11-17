@@ -10,6 +10,8 @@
 
 - FIX - 16/11/2026 - Corriger l'état des utilisateurs internes pour l'envoi des notifications par e-mail
 - FIX - 16/11/2026 - Ajouter la récupération des contacts internes liés à une proposition dans la classe Funding
+- FIX - 17/11/2026 - Remplacer dol_fiche_head par dol_get_fiche_head et dol_fiche_end par dol_get_fiche_end dans plusieurs fichiers
+FIX - 17/11/2026 - Remplacer les vérifications de droits d'accès par la méthode hasRight dans plusieurs fichiers
 
 
 ## [1.1.9] - 11/2026 Dolibarr 24
