@@ -148,9 +148,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->funding->retention->read;
-$permissiontoadd = $user->rights->funding->retention->write;
-$permissiontodelete = $user->rights->funding->retention->delete;
+$permissiontoread = $user->hasRight('funding', 'retention', 'read');
+$permissiontoadd = $user->hasRight('funding', 'retention', 'write');
+$permissiontodelete = $user->hasRight('funding', 'retention', 'delete');
 
 // Security check - Protection if external user
 if (isset($user->socid) && $user->socid > 0) {

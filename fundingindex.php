@@ -56,10 +56,10 @@ $socid = GETPOST('socid', 'int');
 $max = 5;
 $now = dol_now();
 
-$permissiontoread = $user->rights->funding->read;
-$permissiontoadd = $user->rights->funding->write;
-$permissiontodelete = $user->rights->funding->delete;
-$permissionmanage = $user->rights->funding->manage; //User by the function send_mail_org
+$permissiontoread = $user->hasRight('funding', 'read');
+$permissiontoadd = $user->hasRight('funding', 'write');
+$permissiontodelete = $user->hasRight('funding', 'delete');
+$permissionmanage = $user->hasRight('funding', 'manage'); //User by the function send_mail_org
 
 // Security check - Protection if external user
 if (isset($user->socid) && $user->socid > 0) {
@@ -114,11 +114,11 @@ if (!empty($conf->funding->enabled) && $permissiontoread) {
 	$sql.= " WHERE f.status = 1";
 	$sql.= " AND f.origin = 'order'";
 	$sql.= " AND f.fk_soc = s.rowid";
-	/*if (empty($user->rights->societe->client->voir)) {
+	/*if (empty($user->hasRight('societe', 'client', 'voir'))) {
 		$sql .= " AND f.fk_user_comm = ". $user->id;
 	}*/
 	// Filter authorization to view specific funding records - BB2A
-	if (empty($user->rights->societe->client->voir) && empty($socid)) {
+	if (empty($user->hasRight('societe', 'client', 'voir')) && empty($socid)) {
 		$sql.= " AND (f.fk_user_comm = ".$user->id." OR f.fk_user_creat = ".$user->id." OR f.fk_user_modif = ".$user->id.")";
 	}
 	$sql .= " ORDER BY f.ref DESC";
@@ -192,7 +192,7 @@ if (!empty($conf->funding->enabled) && $permissiontoread) {
 	$sql.= " AND f.origin = 'propal'";
 	$sql.= " AND f.fk_soc = s.rowid";
 	// Filter authorization to view specific funding records - BB2A
-	if (empty($user->rights->societe->client->voir) && empty($socid)) {
+	if (empty($user->hasRight('societe', 'client', 'voir')) && empty($socid)) {
 		$sql.= " AND (f.fk_user_comm = ".$user->id." OR f.fk_user_creat = ".$user->id." OR f.fk_user_modif = ".$user->id.")";
 	}
 	$sql .= " ORDER BY f.ref DESC";
@@ -264,7 +264,7 @@ if (!empty($conf->funding->enabled) && $permissiontoread) {
 	$sql.= " AND f.origin = 'order'";
 	$sql.= " AND f.fk_soc = s.rowid";
 	// Filter authorization to view specific funding records - BB2A
-	if (empty($user->rights->societe->client->voir) && empty($socid)) {
+	if (empty($user->hasRight('societe', 'client', 'voir')) && empty($socid)) {
 		$sql.= " AND (f.fk_user_comm = ".$user->id." OR f.fk_user_creat = ".$user->id." OR f.fk_user_modif = ".$user->id.")";
 	}
 	$sql .= " ORDER BY f.ref DESC";
@@ -335,7 +335,7 @@ if (! empty($conf->funding->enabled) && $permissiontoread) {
 	$sql.= " AND f.origin = 'propal'";
 	$sql.= " AND f.fk_soc = s.rowid";
 	// Filter authorization to view specific funding records - BB2A
-	if (empty($user->rights->societe->client->voir) && empty($socid)) {
+	if (empty($user->hasRight('societe', 'client', 'voir')) && empty($socid)) {
 		$sql.= " AND (f.fk_user_comm = ".$user->id." OR f.fk_user_creat = ".$user->id." OR f.fk_user_modif = ".$user->id.")";
 	}
 	$sql .= " ORDER BY f.ref DESC";
