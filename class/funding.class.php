@@ -2939,7 +2939,7 @@ class Funding extends CommonObject
 							$oldstatus = $funding->getLibStatut(1);
 							$funding->fetch($obj->rowid);
 							$output1 .= '<tr>';
-							$output1 .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 1).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
+							$output1 .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 2).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
 							$output1 .= '<td> '.date('d-m-Y', strtotime($obj->date_end)).'</td>';
 							$output1 .= '<td>'.$soc->nom.' ('.$soc->name_alias.')</td>';
 							$output1 .= '<td>'.$funding->getLibStatutFolder(1).'</td>';
@@ -2957,7 +2957,7 @@ class Funding extends CommonObject
 							if ($result >= 0) {
 								$funding->fetch($obj->rowid);
 								$output2 .= '<tr>';
-								$output2 .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 1).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
+								$output2 .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 2).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
 								$output2 .= '<td> '.date('d-m-Y', strtotime($obj->date_end)).'</td>';
 								$output2 .= '<td>'.$soc->nom.' ('.$soc->name_alias.')</td>';
 								$output2 .= '<td>'.$oldstatusfolder.'<br/>'.$funding->getLibStatutFolder(1).'</td>';
@@ -2982,7 +2982,7 @@ class Funding extends CommonObject
 				$output = '<table>';
 				$output .= '<tr style="border:1px solid black; text-color: black; text-align: center; font-weight: bold; background-color: #bed0ec87;">';
 				$output .= '<td colspan="5" style="text-color: #000;">';
-				$output .= '<a href="'.dol_buildpath('/funding/funding_list.php', 1).'?search_status='.self::STATUS_END.'">'.$subject.' '.$this->LibStatut(self::STATUS_END, 1).'</a>';
+				$output .= '<a href="'.dol_buildpath('/funding/funding_list.php', 2).'?search_status='.self::STATUS_END.'">'.$subject.' '.$this->LibStatut(self::STATUS_END, 1).'</a>';
 				$output .= '</td></tr>';
 				$output .= '<tr style="border:1px solid black; font-weight: bold; background-color: #bed0ec87;">';
 				$output .= '<th>'.$langs->transnoentitiesnoconv("Ref").'</th>';
@@ -2997,7 +2997,7 @@ class Funding extends CommonObject
 				$output = '<table>';
 				$output .= '<tr style="border:1px solid black; text-color: black; text-align: center; font-weight: bold; background-color: #bed0ec87;">';
 				$output .= '<td colspan="5" style="text-color: #000;">';
-				$output .= '<a href="'.dol_buildpath('/funding/funding_list.php', 1).'?search_statusfolder='.self::STATUS_FOLDER_EXTENSION.'">'.$subject.' '.$this->LibStatutFolder(self::STATUS_FOLDER_EXTENSION, 1).'</a>';
+				$output .= '<a href="'.dol_buildpath('/funding/funding_list.php', 2).'?search_statusfolder='.self::STATUS_FOLDER_EXTENSION.'">'.$subject.' '.$this->LibStatutFolder(self::STATUS_FOLDER_EXTENSION, 1).'</a>';
 				$output .= '</td></tr>';
 				$output .= '<tr style="border:1px solid black; font-weight: bold; background-color: #bed0ec87;">';
 				$output .= '<th>'.$langs->transnoentitiesnoconv("Ref").'</th>';
@@ -3056,7 +3056,7 @@ class Funding extends CommonObject
 		$outputinit = '<table>';
 		$outputinit .= '<tr style="border:1px solid black; text-color: black; text-align: center; font-weight: bold; background-color: #bed0ec87;">';
 		$outputinit .= '<td colspan="5" style="text-color: #000;">';
-		$outputinit .= '<a href="'.dol_buildpath('/funding/funding_list.php', 1).'?search_status='.self::STATUS_RUNNING.'">'.$subject.'</a>';
+		$outputinit .= '<a href="'.dol_buildpath('/funding/funding_list.php', 2).'?search_status='.self::STATUS_RUNNING.'">'.$subject.'</a>';
 		$outputinit .= '</td></tr>';
 		$outputinit .= '<tr style="border:1px solid black; font-weight: bold; background-color: #bed0ec87;">';
 		$outputinit.= '<th>'.$langs->transnoentitiesnoconv("Ref").'</th>';
@@ -3118,7 +3118,7 @@ class Funding extends CommonObject
 						break; // Should not happen
 					}
 					$output .= '<tr>';
-					$output .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 1).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
+					$output .= '<td><a href="'.dol_buildpath('/funding/funding_card.php', 2).'?id='.$obj->rowid.'">'.$obj->ref.'</a></td>';
 					$output .= '<td> '.date('d-m-Y', strtotime($obj->date_end)).'</td>';
 					$output .= '<td>'.$soc->nom.' ('.$soc->name_alias.')</td>';
 					$output .= '<td>'.$funding->getLibStatutFolder(1).'</td>';
@@ -3301,15 +3301,15 @@ class Funding extends CommonObject
 
 				$message = $langs->transnoentities('Hello') . ' ' . $userto->getFullName($langs) . '<br/>';
 				$message .= $langs->transnoentities('FundingNotificationIntro') . "<br/><br/>";
-				$message .= $langs->transnoentities('FundingRef') . ':  <a href="'.dol_buildpath('/funding/funding_card.php', 1).'?id='.$this->id.'">'.$this->ref.'</a><br/>';
+				$message .= $langs->transnoentities('FundingRef') . ':  <a href="'.dol_buildpath('/funding/funding_card.php', 2).'?id='.$this->id.'">'.$this->ref.'</a><br/>';
 				$message .= $langs->transnoentities('ThirdParty') . ': ' . $this->thirdparty->nom . ' (' . $this->thirdparty->name_alias . ')<br/>';
 				$message .= $langs->transnoentities('ActionPerformed') . ': ' . $langs->transnoentities($action) . "<br/><br/>";
 
 				if ($this->origin == 'propal' && $this->origin_id > 0) {
-					$message .= $langs->transnoentities('ViewPropal') . ': <a href="'.dol_buildpath('/comm/propal/card.php', 1) . '?id=' . $this->origin_id . '">' . $propal->ref . '</a><br/>';
+					$message .= $langs->transnoentities('ViewPropal') . ': <a href="'.dol_buildpath('/comm/propal/card.php', 2) . '?id=' . $this->origin_id . '">' . $propal->ref . '</a><br/>';
 				}
 				if ($this->origin == 'order' && $this->origin_id > 0) {
-					$message .= $langs->transnoentities('ViewOrder') . ': <a href="'.dol_buildpath('/commande/card.php', 1) . '?id=' . $this->origin_id . '">' . $commande->ref . '</a><br/>';
+					$message .= $langs->transnoentities('ViewOrder') . ': <a href="'.dol_buildpath('/commande/card.php', 2) . '?id=' . $this->origin_id . '">' . $commande->ref . '</a><br/>';
 				}
 
 				if ($resultsendmail=$this->sendMail($from, $userto->email, $subject, $message) > 0) {
