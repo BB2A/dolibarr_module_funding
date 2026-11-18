@@ -1415,7 +1415,7 @@ class Funding extends CommonObject
 
 		if (!$error) {
 			// Send notifications to users if enabled
-			$this->sendNotificationToUsers('Notify_FUNDING_VALIDATED', $user);
+			$this->sendNotificationToUsers('Notify_FUNDING_VALIDATED', $user, $notrigger);
 
 			$this->db->commit();
 			return 1;
@@ -1450,7 +1450,7 @@ class Funding extends CommonObject
 
 		$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'FUNDING_UNVALIDATE');
 		if ($result > 0) {
-			$this->sendNotificationToUsers('Notify_FUNDING_DRAFT', $user);
+			$this->sendNotificationToUsers('Notify_FUNDING_DRAFT', $user, $notrigger);
 		}
 		return $result;
 	}
@@ -1472,7 +1472,7 @@ class Funding extends CommonObject
 		$result = $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'FUNDING_CANCEL');
 
 		if ($result > 0) {
-			$this->sendNotificationToUsers('Notify_FUNDING_CANCELED', $user);
+			$this->sendNotificationToUsers('Notify_FUNDING_CANCELED', $user, $notrigger);
 			setEventMessages($langs->trans("fundingcancel"), null);
 		} else {
 			setEventMessages($langs->trans("statusfundingnok"), null, 'errors');
@@ -1507,27 +1507,27 @@ class Funding extends CommonObject
 		}
 		// Update study number upon acceptance
 		if (!empty($study_number)) {
-			$this->setStudyNumber($user, $study_number);
+			$this->setStudyNumber($user, $study_number, 1);
 		}
 		// Update file number upon acceptance
 		if (!empty($folder_number)) {
-			$this->setFolderNumber($user, $folder_number);
+			$this->setFolderNumber($user, $folder_number, 1);
 		}
 		// Update acceptance date to calculate offer validity end date
 		if (!empty($date_accepted)) {
-			$this->setDateAccepted($user, $date_accepted);
+			$this->setDateAccepted($user, $date_accepted, 1);
 		}
 		// Update if retention guarantee is added upon acceptance
 		if ($retention == 'on') {
-			$this->setStatusFolder($user, $this::STATUS_FOLDER_ACCEPT_RETENTION);
+			$this->setStatusFolder($user, $this::STATUS_FOLDER_ACCEPT_RETENTION, 1);
 		} else {
-			$this->setStatusFolder($user, 'NULL');
+			$this->setStatusFolder($user, 'NULL', 1);
 		}
 
 		$result = $this->setStatusCommon($user, $status, $notrigger, $triger);
 		if ($result > 0) {
 			$actionLabel = ($status == self::STATUS_ACCEPT) ? 'Notify_FUNDING_ACCEPTED' : 'Notify_FUNDING_DENIED';
-			$this->sendNotificationToUsers($actionLabel, $user);
+			$this->sendNotificationToUsers($actionLabel, $user, $notrigger);
 		}
 		return $result;
 	}
@@ -1553,7 +1553,7 @@ class Funding extends CommonObject
 				$triger = 'FUNDING_RUNNING';
 				$result = $this->setStatusCommon($user, $status, $notrigger, $triger);
 				if ($result > 0) {
-					$this->sendNotificationToUsers('Notify_FUNDING_RUNNING', $user);
+					$this->sendNotificationToUsers('Notify_FUNDING_RUNNING', $user, $notrigger);
 				}
 				return $result;
 			} else {
@@ -1604,7 +1604,7 @@ class Funding extends CommonObject
 			if ($this->status == self::STATUS_RUNNING && $result >= 0) {
 				$result = $this->setStatusCommon($user, $status, $notrigger, $triger);
 				if ($result > 0) {
-					$this->sendNotificationToUsers('Notify_FUNDING_END', $user);
+					$this->sendNotificationToUsers('Notify_FUNDING_END', $user, $notrigger);
 				}
 				return $result;
 			} else {
@@ -1926,17 +1926,15 @@ class Funding extends CommonObject
 		} elseif ($status == self::STATUS_FOLDER_EXTENSION) {
 			$triger = 'FUNDING_EXTENSION';
 			$actionLabel = 'Notify_FUNDING_EXTENSION';
-		} else {
-			$notriger = 1;
 		}
 
 		if (!$error) {
 			$this->db->commit();
 			if (!$notrigger && empty($error)) {
 				// Call trigger
-				$result = $this->call_trigger($triger, $user);
+				$result = empty($triger) ? 1 : $this->call_trigger($triger, $user);
 				// Send notifications to users if enabled (on every folder status change, including folder publication to the organization)
-				$this->sendNotificationToUsers($actionLabel, $user);
+				$this->sendNotificationToUsers($actionLabel, $user, $notrigger);
 
 				if ($result < 0) {
 					$error++;
@@ -3212,14 +3210,17 @@ class Funding extends CommonObject
 	 *
 	 * @param   string  $action            Action performed (e.g., "Status changed to X")
 	 * @param   User    $user_modification User who made the modification
+	 * @param   int     $notrigger         1=Does not send notification, 0=Send notification
 	 * @return  int     Number of emails sent
 	 */
-	public function sendNotificationToUsers($action, User $user_modification)
+	public function sendNotificationToUsers($action, User $user_modification, $notrigger = 0)
 	{
 		global $conf, $langs, $db;
 
 		$langs->load("funding@funding");
-
+		if (!empty($notrigger)) {
+			return 0;
+		}
 		// Check if user notifications are enabled
 		if (empty($conf->global->FUNDING_ENABLE_USER_NOTIFICATIONS)) {
 			return 0;
