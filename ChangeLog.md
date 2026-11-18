@@ -7,7 +7,7 @@
 
 - NEW - 
 
-- FIX - 
+- FIX - 18/11/2026 - Ajout d'un paramètre pour contrôler l'envoi de notifications dans la classe Funding
 
 ## [1.1.10] - 11/2026 Dolibarr 24
 - PHP min 8
