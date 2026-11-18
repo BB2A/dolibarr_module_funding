@@ -7,7 +7,8 @@
 
 - NEW - 
 
-- FIX - 
+- FIX - 18/11/2026 - Ajout d'un paramètre pour contrôler l'envoi de notifications dans la classe Funding 
+- FIX - 18/11/2026 - Mettre à jour les liens dans les mail
 
 ## [1.1.10] - 11/2026 Dolibarr 24
 - PHP min 8
@@ -21,6 +22,7 @@
 FIX - 17/11/2026 - Remplacer les vérifications de droits d'accès par la méthode hasRight dans plusieurs fichiers
 - FIX - 17/11/2026 - Accès aux documents de financement régi par les permissions du module : le hook restrictedArea (contexts document et viewimage) permet à un utilisateur avec la permission funding « Consulter » ou « Gérer » de télécharger et prévisualiser les documents de financement, sans exiger le droit « Voir tous les tiers » requis par le cœur depuis Dolibarr 24.0.3. Compatible Dolibarr 18 à 24 sans régression (aucun effet sur les versions antérieures à 24.0.3)
 - FIX - 18/11/2026 - Corriger les chemins d'inclusion pour la classe Propal dans funding.class.php ce qui creer un plantage à l'acceptation des propositions de financement
+FIX - 18/11/2026 - API : droit de lecture d'un financement, double delete(), class… 
 
 
 ## [1.1.9] - 11/2026 Dolibarr 24
