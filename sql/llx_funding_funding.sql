@@ -26,6 +26,7 @@ CREATE TABLE llx_funding_funding(
 	fk_soc_invoice integer, 
 	amount double DEFAULT NULL, 
 	amount_maint double DEFAULT NULL, 
+	amount_deposit double DEFAULT NULL, 
 	amount_total double DEFAULT NULL, 
 	fk_duration integer NOT NULL, 
 	coef real, 

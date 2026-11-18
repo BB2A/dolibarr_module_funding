@@ -309,6 +309,7 @@ if (empty($reshook)) {
 	}
 	if ($action == 'clean' && $permissiontoadd) {
 		$object->amount_maint = '';
+		$object->amount_deposit = '';
 		$object->amount_rent_edit = '';
 		$result = $object->update($user);
 		if ($result <= 0) {
