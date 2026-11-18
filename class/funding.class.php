@@ -157,6 +157,7 @@ class Funding extends CommonObject
 		'fk_org' => array('type'=>'integer:Societe:societe/class/societe.class.php::((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'Organization', 'picto'=>'company', 'enabled'=>'isModEnabled("societe")', 'position'=>7, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150', 'help'=>"Help_linkToOrganization", 'validate'=>'1',),
 		'amount' => array('type'=>'price', 'label'=>'Amount', 'picto'=>'percent', 'enabled'=>'1', 'position'=>8, 'notnull'=>0, 'visible'=>5, 'noteditable'=>'1', 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help_amount", 'copytoclipboard'=>2,),
 		'amount_maint' => array('type'=>'price', 'label'=>'AmountMaint', 'enabled'=>'1', 'position'=>9, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help_amountMaint", 'copytoclipboard'=>2,),
+		'amount_deposit' => array('type'=>'price', 'label'=>'AmountDeposit', 'enabled'=>'1', 'position'=>9.5, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help_amountDeposit", 'copytoclipboard'=>2,),
 		'amount_total' => array('type'=>'price', 'label'=>'AmountTotal', 'enabled'=>'1', 'position'=>10, 'notnull'=>0, 'visible'=>5, 'noteditable'=>'1', 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help_amountTotal", 'copytoclipboard'=>2,),
 		'fk_duration' => array('type'=>'integer', 'label'=>'Duration', 'enabled'=>'1', 'position'=>11, 'notnull'=>1, 'visible'=>-1, 'foreignkey'=>'c_funding_duration.rowid', 'help'=>"Help_duration", 'arrayofkeyval'=>array('1'=>'12 Mois', '2'=>'24 Mois', '3'=>'36 Mois', '4'=>'48 Mois', '5'=>'60 Mois'), 'copytoclipboard'=>2,),
 		'coef' => array('type'=>'real', 'label'=>'Coef', 'enabled'=>'1', 'position'=>12, 'notnull'=>0, 'visible'=>-5, 'noteditable'=>'1', 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help_coef", 'copytoclipboard'=>2,),
@@ -583,7 +584,7 @@ class Funding extends CommonObject
 
 				$this->fk_soc       = $document->socid;
 				$this->amount       = $document->total_ht;
-				$this->amount_total = empty($this->amount_maint) ? $document->total_ht : $document->total_ht + $this->amount_maint;
+				$this->amount_total = price2num((float) $document->total_ht + (float) $this->amount_maint - (float) $this->amount_deposit, 'MT');
 				if ($this->retention == 1) {
 					$this->retention_rate = $this->searchRetentionRate($this->fk_org);
 					$this->retention_mount = price2num($this->amount_total / (1-($this->retention_rate/100)), 'MT') - $this->amount_total;
@@ -1090,7 +1091,7 @@ class Funding extends CommonObject
 					$this->fk_soc_invoice = '';
 				}
 				$this->amount       = $document->total_ht;
-				$this->amount_total = empty($this->amount_maint) ? $document->total_ht : $document->total_ht + $this->amount_maint;
+				$this->amount_total = price2num((float) $document->total_ht + (float) $this->amount_maint - (float) $this->amount_deposit, 'MT');
 				if ($this->retention == 1) {
 					// Update retention guarantee only on price change.
 					// To avoid altering the rent sent to the client after rate updates.
