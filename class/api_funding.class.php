@@ -1434,9 +1434,6 @@ class FundingApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('funding', 'write')) {
 			throw new RestException(403);
 		}
-		if (!DolibarrApiAccess::$user->hasRight('funding', 'funding', 'write')) {
-			throw new RestException(403);
-		}
 		if (!DolibarrApi::_checkAccessToResource('funding', $id, 'funding_funding')) {
 			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
